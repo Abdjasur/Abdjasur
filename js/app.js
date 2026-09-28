@@ -26,15 +26,32 @@
   const PLACEHOLDER_SVG = '<svg viewBox="0 0 120 120" aria-hidden="true"><rect class="a" x="20" y="16" width="80" height="10" rx="3"/><rect class="b" x="48" y="26" width="24" height="56"/><rect class="a" x="40" y="66" width="40" height="10" rx="3"/><path class="a" d="M14 104 L40 82 L80 82 L106 104 Z"/></svg>';
   const TG_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21.5 4.3 2.9 11.5c-1.3.5-1.3 1.2-.2 1.6l4.8 1.5 1.8 5.6c.2.6.4.8.9.8.4 0 .6-.2.9-.4l2.3-2.2 4.7 3.5c.9.5 1.5.2 1.7-.8l3.1-14.5c.3-1.3-.5-1.8-1.4-1.3ZM8.6 14.2l9.5-6c.5-.3.9-.1.5.2l-7.9 7.1-.3 3.3-1.8-4.6Z"/></svg>';
 
-  function specsHtml(p) {
-    return `<dl class="specs">
-      <div><dt>${t('spec.material')}</dt><dd>${t('spec.materialV')}</dd></div>
-      <div><dt>${t('spec.load')}</dt><dd>${t('spec.loadV')}</dd></div>
-      <div><dt>${t('spec.height')}</dt><dd>${p.height ? esc(p.height) : `<i>${t('pending')}</i>`}</dd></div>
-    </dl>`;
+  // "Rostlanadigan tayanch" / "Rezina qistirma" etc. — the descriptive half of a product name
+  const typeName = (p, tr = t) => tr(p.category === 'accessory' ? `k.${p.kind}` : `cat.${p.category}`);
+  const productName = (p, tr = t) => `${typeName(p, tr)} ${p.code}`;
+  // Name sent to the manager's Telegram: always Uzbek, whatever the site language
+  const tUz = (key) => I18N.uz[key] ?? key;
+  const specValue = (v) => {
+    if (v && typeof v === 'object') {
+      const keys = Array.isArray(v.t) ? v.t : [v.t];
+      const items = keys.map((k) => esc(k.includes('.') && I18N.uz[k] ? t(k) : k));
+      return items.length > 1 ? `<ul>${items.map((i) => `<li>${i}</li>`).join('')}</ul>` : items[0];
+    }
+    return esc(v);
+  };
+  function specsHtml(rows) {
+    return `<dl class="specs">${rows.map(([label, value]) => `<div><dt>${t(label)}</dt><dd>${specValue(value)}</dd></div>`).join('')}</dl>`;
   }
+  // Short spec rows for catalogue cards
+  const cardSpecs = (p) => (p.category === 'accessory'
+    ? p.specs.filter(([k]) => k !== 's.material' && k !== 's.purpose').slice(0, 2)
+    : [['s.height', p.height], ...(p.load ? [['s.load', p.load]] : [])]);
+  const cardDesc = (p) => {
+    const purpose = p.specs.find(([k]) => k === 's.purpose');
+    return purpose ? `<p class="product__desc">${specValue(purpose[1])}</p>` : '';
+  };
   const imageHtml = (p, eager) => (p.image
-    ? `<img src="${esc(p.image)}" alt="${esc(p.name)}" ${eager ? '' : 'loading="lazy"'}>`
+    ? `<img src="${esc(p.image)}" alt="${esc(productName(p))}" ${eager ? '' : 'loading="lazy"'}>`
     : PLACEHOLDER_SVG);
 
   // ---------------- language ----------------
@@ -48,11 +65,11 @@
     $$('.lang button').forEach((b) => b.classList.toggle('is-active', b.dataset.lang === lang));
     store.set('localStorage', 'lang', lang);
     renderContacts();
-    if (page === 'home') renderCatalog();
+    if (page === 'home') { renderCatalog(); renderRange(); }
     if (page === 'product') renderProduct();
     if (page === 'success') renderSuccess();
     if (modal) renderModalOptions();
-    document.title = page === 'product' && currentProduct ? `${currentProduct.name} — AX Pedestal`
+    document.title = page === 'product' && currentProduct ? `${productName(currentProduct)} — AX Pedestal`
       : page === 'success' ? `${t('s.title')} — AX Pedestal` : t('title');
   }
 
@@ -86,15 +103,22 @@
   });
 
   // ---------------- home ----------------
+  let filter = 'all';
   function renderCatalog() {
     const box = $('#products');
     if (!box) return;
-    box.innerHTML = PRODUCTS.map((p) => `
+    $$('#filters [data-filter]').forEach((b) => {
+      b.classList.toggle('is-active', b.dataset.filter === filter);
+      b.setAttribute('aria-selected', String(b.dataset.filter === filter));
+    });
+    box.innerHTML = PRODUCTS.filter((p) => filter === 'all' || p.category === filter).map((p) => `
       <article class="product">
-        <a class="product__img" href="${productUrl(p)}" aria-label="${esc(p.name)}">${imageHtml(p)}</a>
+        <a class="product__img" href="${productUrl(p)}" aria-label="${esc(productName(p))}">${imageHtml(p)}</a>
         <div class="product__body">
-          <h3><a href="${productUrl(p)}">${esc(p.name)}</a></h3>
-          ${specsHtml(p)}
+          <p class="product__type">${esc(typeName(p))}</p>
+          <h3><a href="${productUrl(p)}">${esc(p.code)}</a></h3>
+          ${cardDesc(p)}
+          ${specsHtml(cardSpecs(p))}
           <div class="product__actions">
             <button type="button" class="btn btn--primary btn--sm" data-order="${esc(p.slug)}">${t('order')}</button>
             <a class="btn btn--ghost btn--sm" href="${productUrl(p)}">${t('details')}</a>
@@ -103,29 +127,66 @@
       </article>`).join('');
   }
 
+  // Height range chart: every pedestal on one 0–340 mm scale
+  function renderRange() {
+    const box = $('#rangeChart');
+    if (!box) return;
+    const MAX = 340;
+    const peds = PRODUCTS.filter((p) => p.category !== 'accessory')
+      .map((p) => ({ p, r: p.height.match(/\d+/g).map(Number) }))
+      .sort((x, y) => x.r[0] - y.r[0]);
+    const ticks = [0, 100, 200, 300];
+    box.innerHTML = `
+      <div class="range__scale" aria-hidden="true">${ticks.map((v) => `<span data-x="${(v / MAX) * 100}">${v}</span>`).join('')}<span class="range__unit">mm</span></div>
+      ${peds.map(({ p, r }) => {
+        const from = r[0]; const to = r[1] ?? r[0];
+        return `<a class="range__row" href="${productUrl(p)}">
+          <span class="range__img">${imageHtml(p)}</span>
+          <span class="range__name"><b>${esc(p.code)}</b><small>${esc(typeName(p))}</small></span>
+          <span class="range__track"><span class="range__bar${from === to ? ' range__bar--fixed' : ''}" data-from="${(from / MAX) * 100}" data-to="${(to / MAX) * 100}"></span></span>
+          <span class="range__val">${esc(p.height)}</span>
+        </a>`;
+      }).join('')}`;
+    // positions via CSSOM (inline style attributes are blocked by the Content-Security-Policy)
+    $$('[data-x]', box).forEach((el) => el.style.setProperty('--x', `${el.dataset.x}%`));
+    $$('[data-from]', box).forEach((el) => { el.style.setProperty('--from', `${el.dataset.from}%`); el.style.setProperty('--to', `${el.dataset.to}%`); });
+  }
+
   // ---------------- product page ----------------
   let currentProduct = null;
   let qty = 1;
+  let shot = 0;
   function renderProduct() {
     const box = $('#productPage');
     if (!box) return;
     const slug = new URLSearchParams(location.search).get('id');
+    if (!currentProduct || currentProduct.slug !== slug) shot = 0;
     currentProduct = productBySlug(slug) || null;
     if (!currentProduct) {
       box.innerHTML = `<div class="empty"><h1>${t('pp.notFound')}</h1><a class="btn btn--primary" href="index.html#catalog">${t('pp.back')}</a></div>`;
       return;
     }
     const p = currentProduct;
+    const shots = [{ src: p.image, label: t('pp.photo') }, ...p.gallery.map((src) => ({ src, label: t(p.category === 'accessory' ? 'pp.example' : 'pp.drawing') }))];
+    const cur = shots[Math.min(shot, shots.length - 1)];
+    const accessories = p.category === 'adjustable' ? PRODUCTS.filter((o) => o.category === 'accessory') : [];
+    const others = PRODUCTS.filter((o) => o !== p && !accessories.includes(o));
+    const tile = (o) => `<a class="other" href="${productUrl(o)}"><span class="other__img">${imageHtml(o)}</span><span><b>${esc(o.code)}</b><small>${esc(typeName(o))}</small></span></a>`;
     box.innerHTML = `
       <nav class="crumbs"><a href="index.html#catalog">← ${t('pp.back')}</a></nav>
       <div class="pp">
-        <div class="pp__media">${imageHtml(p, true)}</div>
+        <div class="pp__gallery">
+          <div class="pp__media${cur.src.includes('drawing') ? ' pp__media--drawing' : ''}"><img src="${esc(cur.src)}" alt="${esc(`${productName(p)} — ${cur.label}`)}"></div>
+          ${shots.length > 1 ? `<div class="pp__thumbs" role="tablist">${shots.map((s, i) => `
+            <button type="button" role="tab" class="pp__thumb${i === shot ? ' is-active' : ''}" data-shot="${i}" aria-selected="${i === shot}" aria-label="${esc(s.label)}"><img src="${esc(s.src)}" alt=""><span>${esc(s.label)}</span></button>`).join('')}</div>` : ''}
+        </div>
         <div class="pp__info">
-          <p class="badge"><span class="dot"></span>ECO PRODUCTS</p>
-          <h1 class="pp__title">${esc(p.name)}</h1>
-          <p class="pp__desc">${t('pp.desc')}</p>
+          <p class="badge"><span class="dot"></span>${esc(typeName(p))}</p>
+          <h1 class="pp__title">${esc(p.code)}</h1>
+          <p class="pp__desc">${t(`d.${p.category}`)}</p>
           <h2 class="pp__h">${t('pp.specs')}</h2>
-          ${specsHtml(p)}
+          ${specsHtml(p.specs)}
+          ${p.details === false ? `<p class="pp__more">${t('pp.more')}</p>` : ''}
           <p class="pp__price">${t('pp.price')}</p>
           <div class="pp__buy">
             <div class="qty" role="group" aria-label="${t('pp.qty')}">
@@ -142,9 +203,10 @@
           </ul>
         </div>
       </div>
-      ${PRODUCTS.length > 1 ? `<section class="pp__others"><h2>${t('pp.others')}</h2><div class="others">${PRODUCTS.filter((o) => o !== p).map((o) => `
-        <a class="other" href="${productUrl(o)}"><span class="other__img">${imageHtml(o)}</span><span>${esc(o.name)}</span></a>`).join('')}</div></section>` : ''}`;
+      ${accessories.length ? `<section class="pp__others"><h2>${t('pp.accessories')}</h2><div class="others">${accessories.map(tile).join('')}</div></section>` : ''}
+      ${others.length ? `<section class="pp__others"><h2>${t('pp.others')}</h2><div class="others">${others.map(tile).join('')}</div></section>` : ''}`;
     bindStepper($('.qty', box), (v) => { qty = v; });
+    $$('[data-shot]', box).forEach((b) => b.addEventListener('click', () => { shot = Number(b.dataset.shot); renderProduct(); $(`[data-shot="${shot}"]`, box)?.focus(); }));
   }
 
   function clampQty(v) { return Math.min(100000, Math.max(1, Math.floor(Number(v)) || 1)); }
@@ -236,7 +298,8 @@
     const region = $('#f-region');
     const pv = product.value;
     const rv = region.value;
-    product.innerHTML = PRODUCTS.map((p) => `<option value="${esc(p.slug)}">${esc(p.name)}</option>`).join('');
+    product.innerHTML = ['adjustable', 'fixed', 'accessory'].map((cat) => `<optgroup label="${esc(t(`f.${cat}`))}">${PRODUCTS.filter((p) => p.category === cat)
+      .map((p) => `<option value="${esc(p.slug)}">${esc(p.code)} — ${esc(typeName(p))}</option>`).join('')}</optgroup>`).join('');
     region.innerHTML = `<option value="">${t('m.regionPh')}</option>` + I18N.uz.regions.map((r, i) => `<option value="${i}">${esc(t('regions')[i])}</option>`).join('');
     if (pv) product.value = pv;
     region.value = rv;
@@ -257,7 +320,7 @@
     const regionIdx = f.region.value;
     return {
       slug: f.product.value,
-      product: productBySlug(f.product.value)?.name || '',
+      product: productBySlug(f.product.value) ? productName(productBySlug(f.product.value), tUz) : '', // Uzbek name for the manager
       quantity: Number(f.quantity.value),
       name: f.name.value.trim(),
       phone: f.phone.value.trim(),
@@ -450,7 +513,7 @@
     const summary = o && o.id === id ? `
       <h2 class="success__h">${t('s.summary')}</h2>
       <dl class="specs specs--summary">
-        <div><dt>${t('m.product')}</dt><dd>${esc(o.product)}</dd></div>
+        <div><dt>${t('m.product')}</dt><dd>${esc(productBySlug(o.slug) ? productName(productBySlug(o.slug)) : o.product)}</dd></div>
         <div><dt>${t('m.qty')}</dt><dd>${esc(o.quantity)} ${t('pcs')}</dd></div>
         <div><dt>${t('m.name')}</dt><dd>${esc(o.name)}</dd></div>
         <div><dt>${t('m.phone')}</dt><dd>${esc(o.phone)}</dd></div>
@@ -472,6 +535,12 @@
   }
 
   // ---------------- boot ----------------
+  $('#filters')?.addEventListener('click', (e) => {
+    const b = e.target.closest('[data-filter]');
+    if (!b) return;
+    filter = b.dataset.filter;
+    renderCatalog();
+  });
   initHeader();
   if (page !== 'success') initModal();
   applyLang(store.get('localStorage', 'lang') || 'uz');

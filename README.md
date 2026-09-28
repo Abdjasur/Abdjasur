@@ -61,12 +61,21 @@ Agar sayt alohida domenda (masalan, GitHub Pages'da) tursa:
 `js/data.js` dagi `ORDER_API_URL` ga backend manzilini yozing va serverda
 `ALLOWED_ORIGIN=https://sayt-domeni` ni belgilang.
 
+## Mahsulotlar va rasmlar
+
+Katalog ma'lumotlari kompaniya taqdimotidan ("AX Pedestal — Регулируемые опоры") olingan:
+PA-A-01…PA-A-06 rostlanadigan tayanchlar, PA-01 rostlanmaydigan tayanch va 5 ta aksessuar
+(SH-0135, PA-SP-02, PA-AD, PS 100 mm, SL 0–5%). Rasmlar `images/` papkasida — taqdimotdan
+ajratib olingan (fonsiz WebP). Logotip: `images/logo.png`, `images/logo-mark.png`,
+ijtimoiy tarmoqlar uchun `images/logo-3d.webp`.
+
 ## Mahsulot qo'shish
 
-`js/data.js` dagi `PRODUCTS` ro'yxatiga yozing:
+`js/data.js` dagi `PRODUCTS` ro'yxatiga yozing (mavjud yozuvlarni namuna sifatida ishlating):
 
 ```js
-{ slug: 'ax-100', name: 'AX-100', image: 'images/ax-100.jpg', height: '30–50 mm' },
+{ slug: 'pa-a-07', code: 'PA-A-07', category: 'adjustable', image: 'images/pa-a-07.webp', gallery: [],
+  height: '320–420 mm', specs: [['s.height', '320–420 mm'], ['s.material', { t: 'v.pp' }]] },
 ```
 
-Rasmlarni `images/` papkasiga joylang.
+`category`: `adjustable` (rostlanadigan), `fixed` (rostlanmaydigan) yoki `accessory` (aksessuar).
