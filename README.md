@@ -16,6 +16,18 @@ formasi va buyurtmalarni kompaniyaning Telegram botiga yuboruvchi backend.
 | `styles.css` | Dizayn (mobil ≤767px, planshet 768–1439px, desktop ≥1440px) |
 | `server/server.js` | Backend: saytni ko'rsatadi, `POST /api/orders` → diskka yozadi → Telegram bot |
 
+## Bitta HTML fayl (tayyor versiya)
+
+`dist/ax-pedestal.html` — butun sayt bitta faylda: dizayn, skriptlar va barcha rasmlar
+ichiga joylangan. Ikki marta bosib brauzerda ochiladi, server shart emas.
+Mahsulot va tasdiqlash sahifalari shu fayl ichida ochiladi (`#product=pa-a-01`).
+
+- `js/data.js` yoki boshqa fayllarni o'zgartirgandan keyin qayta yig'ing: `npm run build`
+- Buyurtma formasi `ORDER_API_URL` ga yuboradi. Faylni serversiz ochganda buyurtma
+  serverga ketmaydi — forma xato xabarini ko'rsatadi va «Telegram orqali buyurtma
+  berish» tugmasi ishlaydi. Buyurtmalar Telegram botga tushishi uchun backendni
+  ishga tushiring va `ORDER_API_URL` ga uning to'liq manzilini yozing.
+
 ## Ishga tushirish
 
 Node.js 18 yoki undan yangi versiya kerak. Tashqi paketlar yo'q.

@@ -7,6 +7,7 @@
   "engines": { "node": ">=18" },
   "scripts": {
     "start": "node server/server.js",
-    "test": "node --test server/server.test.js"
+    "test": "node --test server/server.test.js",
+    "build": "node tools/build-single.mjs"
   }
 }

@@ -6,7 +6,18 @@
   const ORDER_API_URL = window.ORDER_API_URL || '/api/orders';
   const DRAFT_KEY = 'ax-order-draft';
   const LAST_ORDER_KEY = 'ax-last-order';
-  const page = document.body.dataset.page;
+  // Standalone build (one HTML file, see tools/build-single.mjs): pages are views switched by the URL hash
+  const STANDALONE = document.body.dataset.standalone === 'true';
+  const hashParam = (k) => new URLSearchParams(location.hash.slice(1)).get(k);
+  const currentPage = () => {
+    if (!STANDALONE) return document.body.dataset.page;
+    if (hashParam('product')) return 'product';
+    if (hashParam('success')) return 'success';
+    return 'home';
+  };
+  let page = currentPage();
+  const routeId = () => (STANDALONE ? hashParam(page) : new URLSearchParams(location.search).get('id'));
+  const homeUrl = (anchor = '') => (STANDALONE ? `#${anchor || 'top'}` : `index.html${anchor ? `#${anchor}` : ''}`);
 
   let lang = 'uz';
   const t = (key) => I18N[lang][key] ?? I18N.uz[key] ?? key;
@@ -19,7 +30,7 @@
     remove(area, key) { try { window[area].removeItem(key); } catch { /* storage unavailable */ } },
   };
   const productBySlug = (slug) => PRODUCTS.find((p) => p.slug === slug);
-  const productUrl = (p) => `product.html?id=${encodeURIComponent(p.slug)}`;
+  const productUrl = (p) => (STANDALONE ? `#product=${encodeURIComponent(p.slug)}` : `product.html?id=${encodeURIComponent(p.slug)}`);
   const telHref = (phone) => `tel:${phone.replace(/[^\d+]/g, '')}`;
   const tgUrl = () => (CONTACTS.telegram ? `https://t.me/${encodeURIComponent(CONTACTS.telegram)}` : '');
 
@@ -159,11 +170,11 @@
   function renderProduct() {
     const box = $('#productPage');
     if (!box) return;
-    const slug = new URLSearchParams(location.search).get('id');
+    const slug = routeId();
     if (!currentProduct || currentProduct.slug !== slug) shot = 0;
     currentProduct = productBySlug(slug) || null;
     if (!currentProduct) {
-      box.innerHTML = `<div class="empty"><h1>${t('pp.notFound')}</h1><a class="btn btn--primary" href="index.html#catalog">${t('pp.back')}</a></div>`;
+      box.innerHTML = `<div class="empty"><h1>${t('pp.notFound')}</h1><a class="btn btn--primary" href="${homeUrl('catalog')}">${t('pp.back')}</a></div>`;
       return;
     }
     const p = currentProduct;
@@ -173,7 +184,7 @@
     const others = PRODUCTS.filter((o) => o !== p && !accessories.includes(o));
     const tile = (o) => `<a class="other" href="${productUrl(o)}"><span class="other__img">${imageHtml(o)}</span><span><b>${esc(o.code)}</b><small>${esc(typeName(o))}</small></span></a>`;
     box.innerHTML = `
-      <nav class="crumbs"><a href="index.html#catalog">← ${t('pp.back')}</a></nav>
+      <nav class="crumbs"><a href="${homeUrl('catalog')}">← ${t('pp.back')}</a></nav>
       <div class="pp">
         <div class="pp__gallery">
           <div class="pp__media${cur.src.includes('drawing') ? ' pp__media--drawing' : ''}"><img src="${esc(cur.src)}" alt="${esc(`${productName(p)} — ${cur.label}`)}"></div>
@@ -430,7 +441,7 @@
       if (res.ok && body.ok) {
         store.set('sessionStorage', LAST_ORDER_KEY, { id: body.id, ...data });
         store.remove('localStorage', DRAFT_KEY);
-        location.href = `order-success.html?id=${encodeURIComponent(body.id)}`;
+        if (STANDALONE) { closeOrder(); location.hash = `success=${encodeURIComponent(body.id)}`; } else location.href = `order-success.html?id=${encodeURIComponent(body.id)}`;
         return;
       }
       if (res.status === 400 && body.fields) {
@@ -507,8 +518,8 @@
   function renderSuccess() {
     const box = $('#successPage');
     if (!box) return;
-    const id = new URLSearchParams(location.search).get('id');
-    if (!id) { location.replace('index.html'); return; }
+    const id = routeId();
+    if (!id) { if (STANDALONE) location.hash = 'top'; else location.replace('index.html'); return; }
     const o = store.get('sessionStorage', LAST_ORDER_KEY);
     const summary = o && o.id === id ? `
       <h2 class="success__h">${t('s.summary')}</h2>
@@ -528,8 +539,8 @@
         <p class="success__id">${t('s.number')}: <b>${esc(id)}</b></p>
         ${summary}
         <div class="success__actions">
-          <a class="btn btn--primary btn--lg" href="index.html">${t('s.home')}</a>
-          <a class="btn btn--ghost btn--lg" href="index.html#catalog">${t('s.catalog')}</a>
+          <a class="btn btn--primary btn--lg" href="${homeUrl()}">${t('s.home')}</a>
+          <a class="btn btn--ghost btn--lg" href="${homeUrl('catalog')}">${t('s.catalog')}</a>
         </div>
       </div>`;
   }
@@ -542,7 +553,21 @@
     renderCatalog();
   });
   initHeader();
-  if (page !== 'success') initModal();
+  if (STANDALONE || page !== 'success') initModal();
+  if (STANDALONE) {
+    const showView = () => $$('[data-view]').forEach((v) => { v.hidden = v.dataset.view !== page; });
+    showView();
+    window.addEventListener('hashchange', () => {
+      const prev = page;
+      page = currentPage();
+      showView();
+      applyLang(lang);
+      const anchor = page === 'home' && location.hash.length > 1 && document.getElementById(location.hash.slice(1));
+      // a view switch acts like a page load: jump, don't animate (html has scroll-behavior: smooth)
+      if (anchor) anchor.scrollIntoView({ behavior: page !== prev ? 'instant' : 'smooth' });
+      else if (page !== prev || page === 'product') window.scrollTo({ top: 0, behavior: 'instant' });
+    });
+  }
   applyLang(store.get('localStorage', 'lang') || 'uz');
 
   // reveal on scroll (home)
