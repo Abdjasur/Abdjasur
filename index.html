@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="uz">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pedestal — postament va podiumlar</title>
+  <meta name="description" content="Pedestal: postament, podium, vitrina va ko'rgazma stendlarini buyurtma asosida ishlab chiqarish.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='9' y='4' width='14' height='4' fill='%238a5a3b'/%3E%3Crect x='11' y='8' width='10' height='16' fill='%23c9a27e'/%3E%3Crect x='7' y='24' width='18' height='4' fill='%238a5a3b'/%3E%3C/svg%3E">
+</head>
+<body>
+  <header class="header">
+    <div class="container header__inner">
+      <a href="#top" class="logo" aria-label="Pedestal">
+        <svg viewBox="0 0 32 32" aria-hidden="true"><rect x="9" y="4" width="14" height="4"/><rect x="11" y="8" width="10" height="16" class="logo__col"/><rect x="7" y="24" width="18" height="4"/></svg>
+        <span>Pedestal</span>
+      </a>
+      <nav class="nav" id="nav">
+        <a href="#products" data-i18n="nav.products">Mahsulotlar</a>
+        <a href="#materials" data-i18n="nav.materials">Materiallar</a>
+        <a href="#process" data-i18n="nav.process">Jarayon</a>
+        <a href="#works" data-i18n="nav.works">Ishlarimiz</a>
+        <a href="#contact" data-i18n="nav.contact">Aloqa</a>
+      </nav>
+      <div class="header__tools">
+        <div class="lang" role="group" aria-label="Language">
+          <button type="button" data-lang="uz" class="is-active">UZ</button>
+          <button type="button" data-lang="ru">RU</button>
+          <button type="button" data-lang="en">EN</button>
+        </div>
+        <button class="burger" id="burger" aria-label="Menu" aria-expanded="false"><span></span><span></span></button>
+      </div>
+    </div>
+  </header>
+
+  <main id="top">
+    <section class="hero">
+      <div class="container hero__inner">
+        <div class="hero__text">
+          <p class="eyebrow" data-i18n="hero.eyebrow">Buyurtma asosida ishlab chiqarish</p>
+          <h1 data-i18n="hero.title">Mahsulotingizga munosib postament</h1>
+          <p class="lead" data-i18n="hero.lead">Do'konlar, galereyalar, muzeylar va ko'rgazmalar uchun postament, podium va vitrinalar. Loyihadan o'rnatishgacha — hammasi bir joyda.</p>
+          <div class="hero__cta">
+            <a href="#contact" class="btn btn--primary" data-i18n="hero.cta">Buyurtma berish</a>
+            <a href="#products" class="btn btn--ghost" data-i18n="hero.cta2">Katalogni ko'rish</a>
+          </div>
+          <ul class="stats">
+            <li><strong>100%</strong><span data-i18n="stats.custom">o'lchamga moslab</span></li>
+            <li><strong>6+</strong><span data-i18n="stats.materials">turdagi material</span></li>
+            <li><strong>3D</strong><span data-i18n="stats.design">eskiz bepul</span></li>
+          </ul>
+        </div>
+        <div class="hero__art" aria-hidden="true">
+          <svg viewBox="0 0 400 440">
+            <ellipse cx="200" cy="410" rx="170" ry="18" class="shadow"/>
+            <!-- tall column -->
+            <rect x="60" y="120" width="90" height="12" class="wood-dark"/>
+            <rect x="68" y="132" width="74" height="250" class="stone"/>
+            <rect x="56" y="382" width="98" height="18" class="wood-dark"/>
+            <!-- sculpture sphere -->
+            <circle cx="105" cy="88" r="32" class="accent"/>
+            <!-- low wide podium -->
+            <rect x="170" y="270" width="180" height="12" class="wood-dark"/>
+            <rect x="178" y="282" width="164" height="100" class="wood"/>
+            <rect x="166" y="382" width="188" height="18" class="wood-dark"/>
+            <!-- vase -->
+            <path d="M240 270 C 225 240, 228 215, 245 200 L 275 200 C 292 215, 295 240, 280 270 Z" class="stone-dark"/>
+            <rect x="248" y="188" width="24" height="14" class="stone-dark"/>
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="products">
+      <div class="container">
+        <p class="eyebrow" data-i18n="products.eyebrow">Mahsulotlar</p>
+        <h2 data-i18n="products.title">Nima tayyorlaymiz</h2>
+        <div class="cards">
+          <article class="card">
+            <svg viewBox="0 0 80 80" aria-hidden="true"><rect x="24" y="12" width="32" height="6"/><rect x="28" y="18" width="24" height="44" class="c2"/><rect x="20" y="62" width="40" height="6"/></svg>
+            <h3 data-i18n="p1.title">Postamentlar</h3>
+            <p data-i18n="p1.text">Haykal, vaza va eksponatlar uchun klassik va zamonaviy postamentlar.</p>
+          </article>
+          <article class="card">
+            <svg viewBox="0 0 80 80" aria-hidden="true"><rect x="8" y="40" width="64" height="6"/><rect x="12" y="46" width="56" height="18" class="c2"/><rect x="6" y="64" width="68" height="4"/></svg>
+            <h3 data-i18n="p2.title">Podiumlar</h3>
+            <p data-i18n="p2.text">Do'kon vitrinasi, mashina taqdimoti va sahna uchun past va keng podiumlar.</p>
+          </article>
+          <article class="card">
+            <svg viewBox="0 0 80 80" aria-hidden="true"><rect x="18" y="10" width="44" height="30" class="glass"/><rect x="16" y="40" width="48" height="4"/><rect x="20" y="44" width="40" height="22" class="c2"/><rect x="14" y="66" width="52" height="4"/></svg>
+            <h3 data-i18n="p3.title">Vitrinalar</h3>
+            <p data-i18n="p3.text">Zargarlik, muzey va kolleksiyalar uchun shisha qopqoqli, yoritilgan vitrinalar.</p>
+          </article>
+          <article class="card">
+            <svg viewBox="0 0 80 80" aria-hidden="true"><rect x="8" y="14" width="64" height="34" class="c2"/><rect x="14" y="20" width="22" height="22" class="glass"/><rect x="42" y="22" width="24" height="4"/><rect x="42" y="30" width="18" height="4"/><rect x="18" y="48" width="4" height="18"/><rect x="58" y="48" width="4" height="18"/><rect x="8" y="66" width="64" height="4"/></svg>
+            <h3 data-i18n="p4.title">Ko'rgazma stendlari</h3>
+            <p data-i18n="p4.text">Ko'rgazma va yarmarkalar uchun yig'ma, brendlangan stend va resepshn stollari.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section--alt" id="materials">
+      <div class="container split">
+        <div>
+          <p class="eyebrow" data-i18n="materials.eyebrow">Materiallar</p>
+          <h2 data-i18n="materials.title">Har bir loyihaga — o'z materiali</h2>
+          <p class="lead" data-i18n="materials.lead">Materialni byudjet, interyer va yuklamaga qarab birgalikda tanlaymiz.</p>
+        </div>
+        <ul class="swatches">
+          <li><span class="sw sw--oak"></span><b data-i18n="m1">Yog'och (eman, yong'oq)</b></li>
+          <li><span class="sw sw--mdf"></span><b data-i18n="m2">Bo'yalgan MDF</b></li>
+          <li><span class="sw sw--marble"></span><b data-i18n="m3">Marmar va sun'iy tosh</b></li>
+          <li><span class="sw sw--steel"></span><b data-i18n="m4">Metall (po'lat, latun)</b></li>
+          <li><span class="sw sw--acryl"></span><b data-i18n="m5">Akril va shisha</b></li>
+          <li><span class="sw sw--concrete"></span><b data-i18n="m6">Dekorativ beton</b></li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section" id="process">
+      <div class="container">
+        <p class="eyebrow" data-i18n="process.eyebrow">Jarayon</p>
+        <h2 data-i18n="process.title">Buyurtmadan o'rnatishgacha</h2>
+        <ol class="steps">
+          <li><span>01</span><h3 data-i18n="s1.title">Ariza</h3><p data-i18n="s1.text">Vazifa, o'lcham va muddatni muhokama qilamiz.</p></li>
+          <li><span>02</span><h3 data-i18n="s2.title">3D eskiz</h3><p data-i18n="s2.text">Bepul vizualizatsiya va aniq narx taklifi.</p></li>
+          <li><span>03</span><h3 data-i18n="s3.title">Ishlab chiqarish</h3><p data-i18n="s3.text">O'z sexmizda, har bir bosqich nazorati bilan.</p></li>
+          <li><span>04</span><h3 data-i18n="s4.title">Yetkazish va o'rnatish</h3><p data-i18n="s4.text">Obyektga olib borib, joyida o'rnatib beramiz.</p></li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="section section--alt" id="works">
+      <div class="container">
+        <p class="eyebrow" data-i18n="works.eyebrow">Ishlarimiz</p>
+        <h2 data-i18n="works.title">Kimlar uchun ishlaymiz</h2>
+        <div class="works">
+          <figure class="work work--a"><figcaption data-i18n="w1">Butiklar va shourumlar</figcaption></figure>
+          <figure class="work work--b"><figcaption data-i18n="w2">Galereya va muzeylar</figcaption></figure>
+          <figure class="work work--c"><figcaption data-i18n="w3">Ko'rgazma va taqdimotlar</figcaption></figure>
+          <figure class="work work--d"><figcaption data-i18n="w4">Mehmonxona va restoranlar</figcaption></figure>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="contact">
+      <div class="container split">
+        <div>
+          <p class="eyebrow" data-i18n="contact.eyebrow">Aloqa</p>
+          <h2 data-i18n="contact.title">Loyihangizni muhokama qilaylik</h2>
+          <p class="lead" data-i18n="contact.lead">Ariza qoldiring — 1 ish kuni ichida bog'lanamiz va bepul maslahat beramiz.</p>
+          <ul class="contacts">
+            <li><span data-i18n="contact.phone">Telefon</span><a href="tel:+998000000000">+998 (00) 000-00-00</a></li>
+            <li><span>Telegram</span><a href="https://t.me/" target="_blank" rel="noopener">@pedestal</a></li>
+            <li><span data-i18n="contact.address">Manzil</span><b data-i18n="contact.city">Toshkent, O'zbekiston</b></li>
+          </ul>
+        </div>
+        <form class="form" id="form" novalidate>
+          <label><span data-i18n="form.name">Ismingiz</span><input name="name" required autocomplete="name"></label>
+          <label><span data-i18n="form.phone">Telefon</span><input name="phone" type="tel" required autocomplete="tel" placeholder="+998"></label>
+          <label><span data-i18n="form.type">Nima kerak?</span>
+            <select name="type">
+              <option data-i18n="p1.title">Postamentlar</option>
+              <option data-i18n="p2.title">Podiumlar</option>
+              <option data-i18n="p3.title">Vitrinalar</option>
+              <option data-i18n="p4.title">Ko'rgazma stendlari</option>
+            </select>
+          </label>
+          <label><span data-i18n="form.msg">Izoh (o'lcham, soni, muddat)</span><textarea name="msg" rows="4"></textarea></label>
+          <button class="btn btn--primary" type="submit" data-i18n="form.send">Yuborish</button>
+          <p class="form__note" id="formNote" role="status"></p>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer__inner">
+      <span>© <span id="year"></span> Pedestal</span>
+      <span data-i18n="footer.tag">Postament, podium va vitrinalar</span>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
