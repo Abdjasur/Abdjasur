@@ -11,7 +11,7 @@
   <link rel="stylesheet" href="styles.css">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%231f8a4c'/%3E%3Crect x='8' y='8' width='16' height='4' rx='1' fill='%23fff'/%3E%3Crect x='13' y='12' width='6' height='10' fill='%23fff'/%3E%3Crect x='7' y='22' width='18' height='3' rx='1' fill='%23fff'/%3E%3C/svg%3E">
 </head>
-<body>
+<body data-page="home">
   <header class="header">
     <div class="container header__inner">
       <a href="#top" class="logo" aria-label="AX Pedestal">
@@ -44,7 +44,7 @@
           <p class="lead" data-i18n="hero.lead">Terassa, balkon, tom maydonlari va ochiq havodagi pol qoplamalarini kerakli balandlikda ushlab turadi va tekislaydi.</p>
           <div class="hero__cta">
             <a href="#catalog" class="btn btn--primary" data-i18n="hero.cta">Katalogni ko'rish</a>
-            <a href="#contact" class="btn btn--ghost" data-i18n="hero.cta2">Narxni bilish</a>
+            <button type="button" class="btn btn--ghost" data-order="" data-i18n="hero.cta2">Buyurtma berish</button>
           </div>
           <div class="hero__load">
             <strong data-i18n="hero.load">1 tonnagacha</strong>
@@ -105,7 +105,7 @@
       <div class="container">
         <p class="eyebrow" data-i18n="catalog.eyebrow">Katalog</p>
         <h2 data-i18n="catalog.title">Mahsulotlar</h2>
-        <p class="lead" data-i18n="catalog.lead">Narxlar so'rov bo'yicha. Kerakli modelda «Narxni bilish» tugmasini bosing — siz bilan bog'lanamiz.</p>
+        <p class="lead" data-i18n="catalog.lead">Narxlar so'rov bo'yicha. Kerakli modelni tanlab, «Buyurtma berish» tugmasini bosing — menejerimiz siz bilan bog'lanadi.</p>
         <div class="products" id="products"></div>
       </div>
     </section>
@@ -158,8 +158,8 @@
       <div class="container split">
         <div>
           <p class="eyebrow" data-i18n="contact.eyebrow">Aloqa</p>
-          <h2 data-i18n="contact.title">Narxni bilish va buyurtma</h2>
-          <p class="lead" data-i18n="contact.lead">Ariza qoldiring yoki biz bilan to'g'ridan-to'g'ri bog'laning.</p>
+          <h2 data-i18n="contact.title">Buyurtma va aloqa</h2>
+          <p class="lead" data-i18n="contact.lead">Buyurtma bering yoki biz bilan to'g'ridan-to'g'ri bog'laning.</p>
           <ul class="contacts">
             <li><span data-i18n="contact.address">Manzil</span><b data-i18n="contact.city">Farg'ona, O'zbekiston</b></li>
             <li><span data-i18n="contact.phone">Telefon</span><b data-contact="phone"></b></li>
@@ -167,14 +167,13 @@
             <li><span>Instagram</span><b data-contact="instagram"></b></li>
           </ul>
         </div>
-        <form class="form" id="form" novalidate>
-          <label><span data-i18n="form.name">Ismingiz</span><input name="name" required autocomplete="name"></label>
-          <label><span data-i18n="form.phone">Telefon</span><input name="phone" type="tel" required autocomplete="tel" placeholder="+998"></label>
-          <label><span data-i18n="form.product">Mahsulot</span><select name="product" id="productSelect"></select></label>
-          <label><span data-i18n="form.msg">Izoh (miqdor, balandlik, obyekt)</span><textarea name="msg" rows="4"></textarea></label>
-          <button class="btn btn--primary" type="submit" data-i18n="form.send">Narxni bilish</button>
-          <p class="form__note" id="formNote" role="status"></p>
-        </form>
+        <div class="cta-card">
+          <div class="cta-card__icon" aria-hidden="true"><svg viewBox="0 0 48 48"><path d="M8 14h32l-3 20H11L8 14Zm6 0 3-6h14l3 6M18 22v6M30 22v6"/></svg></div>
+          <h3 data-i18n="m.title">Buyurtma berish</h3>
+          <p data-i18n="pp.price">Narx so'rov bo'yicha: buyurtmadan so'ng menejerimiz siz bilan bog'lanadi.</p>
+          <button type="button" class="btn btn--primary btn--lg btn--block" data-order="" data-i18n="order">Buyurtma berish</button>
+          <button type="button" class="btn btn--tg btn--lg btn--block" data-tg-contact><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21.5 4.3 2.9 11.5c-1.3.5-1.3 1.2-.2 1.6l4.8 1.5 1.8 5.6c.2.6.4.8.9.8.4 0 .6-.2.9-.4l2.3-2.2 4.7 3.5c.9.5 1.5.2 1.7-.8l3.1-14.5c.3-1.3-.5-1.8-1.4-1.3ZM8.6 14.2l9.5-6c.5-.3.9-.1.5.2l-7.9 7.1-.3 3.3-1.8-4.6Z"/></svg><span data-i18n="tgContact">Telegram orqali bog'lanish</span></button>
+        </div>
       </div>
     </section>
   </main>
@@ -186,6 +185,8 @@
     </div>
   </footer>
 
-  <script src="script.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/i18n.js"></script>
+  <script src="js/app.js"></script>
 </body>
 </html>

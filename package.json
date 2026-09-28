@@ -1,0 +1,12 @@
+{
+  "name": "ax-pedestal-site",
+  "version": "1.0.0",
+  "private": true,
+  "description": "AX Pedestal website with order form and Telegram bot notifications",
+  "type": "module",
+  "engines": { "node": ">=18" },
+  "scripts": {
+    "start": "node server/server.js",
+    "test": "node --test server/server.test.js"
+  }
+}
