@@ -433,3 +433,39 @@ html.modal-open { overflow: hidden; }
   .products .product__actions { grid-template-columns: 1fr; gap: 6px; }
   .products .product__actions .btn { min-height: 44px; padding: 8px 12px; }
 }
+
+/* delivery map */
+.delivery { background: linear-gradient(160deg, #123d2c 0%, #0b271c 55%, #071a13 100%); color: #eef6f1; }
+.delivery .eyebrow { color: #5fe3a1; }
+.delivery h2 { color: #fff; }
+.delivery .lead { color: #b9cdc3; }
+.uzmap { position: relative; margin: 36px 0 0; padding: 24px; border-radius: 24px; background: radial-gradient(700px 320px at 75% 0%, rgba(95, 227, 161, .16), transparent 70%), rgba(255, 255, 255, .03); border: 1px solid rgba(95, 227, 161, .18); }
+.uzmap svg { display: block; width: 100%; height: auto; overflow: visible; }
+.uzmap__region { fill: #1f8f78; stroke: #0b271c; stroke-width: 1.4; stroke-linejoin: round; transition: fill .2s; }
+.uzmap__region:nth-of-type(odd) { fill: #23a086; }
+.uzmap__region:hover { fill: #3ddc84; }
+.uzmap__sea { fill: #2a6f9a; opacity: .55; stroke: #0b271c; stroke-width: 1; }
+.uzmap__sea-label { fill: #bfe3f5; font-size: 10px; font-style: italic; text-anchor: middle; pointer-events: none; }
+.uzmap__dot { fill: #fff; stroke: #0b271c; stroke-width: 1.2; }
+.uzmap__pulse { fill: #5fe3a1; opacity: .45; transform-box: fill-box; transform-origin: center; animation: uzpulse 2.4s ease-out infinite; }
+.uzmap__leader { stroke: #e9f7f3; stroke-opacity: .7; stroke-width: 1; stroke-dasharray: 2 2; }
+.uzmap__label { fill: #fff; font-size: 12.5px; font-weight: 700; text-anchor: middle; paint-order: stroke; stroke: #0b271c; stroke-width: 3px; stroke-linejoin: round; pointer-events: none; }
+@keyframes uzpulse { from { transform: scale(.6); opacity: .6; } to { transform: scale(2.2); opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .uzmap__pulse { animation: none; } }
+.uzmap figcaption { position: absolute; right: 18px; bottom: 10px; font-size: .7rem; color: rgba(233, 247, 243, .45); }
+.uzmap figcaption a { color: inherit; }
+.delivery__info { display: grid; gap: 20px; margin-top: 24px; align-items: center; }
+@media (min-width: 900px) { .delivery__info { grid-template-columns: 1.1fr 1fr; } .delivery__cta { grid-column: 1 / -1; } }
+.delivery__badge { display: flex; gap: 16px; align-items: flex-start; padding: 22px; border-radius: 18px; background: rgba(61, 220, 132, .1); border: 1px solid rgba(61, 220, 132, .35); }
+.delivery__badge svg { flex: none; width: 52px; height: 52px; fill: none; stroke: #5fe3a1; stroke-width: 2.4; stroke-linejoin: round; }
+.delivery__badge h3 { margin: 2px 0 6px; font-size: 1.2rem; color: #fff; }
+.delivery__badge p { margin: 0; color: #c9dcd2; font-size: .95rem; }
+.delivery__regions-title { margin: 0 0 10px; font-size: .8rem; letter-spacing: .12em; text-transform: uppercase; color: #8fb3a3; }
+.delivery__regions ul { display: flex; flex-wrap: wrap; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.delivery__regions li { padding: 6px 12px; border-radius: 999px; background: rgba(255, 255, 255, .06); border: 1px solid rgba(255, 255, 255, .12); font-size: .85rem; color: #e9f3ee; }
+.delivery__cta { display: flex; flex-wrap: wrap; gap: 12px; }
+@media (max-width: 700px) {
+  .uzmap { padding: 10px 6px 22px; border-radius: 18px; }
+  .uzmap__label, .uzmap__leader, .uzmap__sea-label { display: none; }
+  .delivery__cta .btn { flex: 1 1 100%; }
+}
