@@ -7,7 +7,7 @@
 // (The Telegram BOT token is NOT here — it lives only on the server, see README.)
 window.CONTACTS = {
   phone: '+998 90 207 50 20',      // e.g. '+998 90 123 45 67'
-  telegram: '',                    // manager's Telegram username without @, e.g. 'axpedestal'
+  telegram: 'mr_jasurme',          // manager's Telegram username without @, e.g. 'axpedestal'
   telegramChannel: 'axpedestal',   // public Telegram channel username without @
   instagram: 'axpedestal_com',     // Instagram username without @
   email: 'axpedestal@gmail.com',
