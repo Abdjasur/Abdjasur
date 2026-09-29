@@ -77,6 +77,7 @@
     store.set('localStorage', 'lang', lang);
     renderContacts();
     renderSocials();
+    renderRowIcons();
     if (page === 'home') { renderCatalog(); renderRange(); }
     if (page === 'product') renderProduct();
     if (page === 'success') renderSuccess();
@@ -102,6 +103,8 @@
       telegram: CONTACTS.telegram && `<a href="${tgUrl()}" target="_blank" rel="noopener">@${esc(CONTACTS.telegram)}</a>`,
       instagram: CONTACTS.instagram && `<a href="https://instagram.com/${encodeURIComponent(CONTACTS.instagram)}" target="_blank" rel="noopener">@${esc(CONTACTS.instagram)}</a>`,
       telegramChannel: CONTACTS.telegramChannel && `<a href="https://t.me/${encodeURIComponent(CONTACTS.telegramChannel)}" target="_blank" rel="noopener">@${esc(CONTACTS.telegramChannel)}</a>`,
+      youtube: CONTACTS.youtube && `<a href="${esc(CONTACTS.youtube)}" target="_blank" rel="noopener">@AxPedestal</a>`,
+      facebook: CONTACTS.facebook && `<a href="${esc(CONTACTS.facebook)}" target="_blank" rel="noopener">${esc(CONTACTS.facebook.replace(/^https?:\/\/(www\.)?/, ''))}</a>`,
       email: CONTACTS.email && `<a href="mailto:${encodeURIComponent(CONTACTS.email).replace('%40', '@')}">${esc(CONTACTS.email)}</a>`,
     };
     $$('[data-contact]').forEach((el) => { el.innerHTML = links[el.dataset.contact] || `<span class="pending">${t('pending')}</span>`; });
@@ -114,6 +117,18 @@
     facebook: '<path d="M13.5 22v-8.2h2.8l.4-3.2h-3.2V8.5c0-.9.3-1.6 1.6-1.6h1.7V4.1c-.3 0-1.3-.1-2.5-.1-2.5 0-4.2 1.5-4.2 4.3v2.3H7.3v3.2h2.8V22h3.4Z"/>',
     instagram: '<path d="M12 7.3a4.7 4.7 0 1 0 0 9.4 4.7 4.7 0 0 0 0-9.4Zm0 7.7a3 3 0 1 1 0-6 3 3 0 0 1 0 6Zm4.9-8.9a1.1 1.1 0 1 0 0 2.2 1.1 1.1 0 0 0 0-2.2ZM12 3c-2.4 0-2.7 0-3.7.1-3.3.1-5 1.9-5.2 5.2C3 9.3 3 9.6 3 12s0 2.7.1 3.7c.1 3.3 1.9 5 5.2 5.2 1 .1 1.3.1 3.7.1s2.7 0 3.7-.1c3.3-.1 5-1.9 5.2-5.2.1-1 .1-1.3.1-3.7s0-2.7-.1-3.7c-.1-3.3-1.9-5-5.2-5.2C14.7 3 14.4 3 12 3Zm0 1.6c2.4 0 2.7 0 3.6.1 2.4.1 3.5 1.2 3.6 3.6.1.9.1 1.2.1 3.6s0 2.7-.1 3.6c-.1 2.4-1.2 3.5-3.6 3.6-.9.1-1.2.1-3.6.1s-2.7 0-3.6-.1c-2.4-.1-3.5-1.2-3.6-3.6-.1-.9-.1-1.2-.1-3.6s0-2.7.1-3.6c.1-2.4 1.2-3.5 3.6-3.6.9-.1 1.2-.1 3.6-.1Z"/>',
   };
+  const ROW_ICONS = {
+    address: '<path d="M12 2a7 7 0 0 0-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 0 0-7-7Zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5Z"/>',
+    phone: '<path d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1A17 17 0 0 1 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1l-2.3 2.2Z"/>',
+    email: '<path d="M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2Zm0 4-8 5-8-5V6l8 5 8-5v2Z"/>',
+  };
+  function renderRowIcons() {
+    $$('[data-icon]').forEach((el) => {
+      const k = el.dataset.icon;
+      const path = ROW_ICONS[k] || SOCIAL_ICONS[k];
+      if (path) el.innerHTML = `<svg viewBox="0 0 24 24" aria-hidden="true">${path}</svg>`;
+    });
+  }
   function renderSocials() {
     const links = [
       ['youtube', 'YouTube', CONTACTS.youtube],

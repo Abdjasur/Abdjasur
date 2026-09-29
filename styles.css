@@ -485,3 +485,15 @@ html.modal-open { overflow: hidden; }
 .socials--sm .social { width: 36px; height: 36px; border-radius: 10px; box-shadow: none; }
 .socials--sm .social svg { width: 19px; height: 19px; }
 .footer__inner { align-items: center; }
+
+/* contact row icons */
+.contacts li { align-items: center; }
+.contacts li > span { display: inline-flex; align-items: center; gap: 12px; }
+.ci { display: inline-grid; place-items: center; flex: none; width: 34px; height: 34px; border-radius: 10px; color: #fff; }
+.ci svg { width: 18px; height: 18px; fill: currentColor; }
+.ci--address, .ci--phone, .ci--email { background: var(--green-soft); color: var(--green); }
+.ci--telegram { background: #2aa3df; }
+.ci--instagram { background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fd5949 45%, #d6249f 60%, #285aeb 90%); }
+.ci--youtube { background: #e62f22; }
+.ci--facebook { background: #1877f2; }
+@media (max-width: 420px) { .contacts b { font-size: .88rem; word-break: break-all; } }

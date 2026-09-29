@@ -12,7 +12,7 @@ window.CONTACTS = {
   instagram: 'axpedestal_com',     // Instagram username without @
   email: 'axpedestal@gmail.com',
   youtube: 'https://www.youtube.com/@AxPedestal',
-  facebook: '',                    // full Facebook page URL; empty = icon hidden
+  facebook: 'https://www.facebook.com/Axpedestal', // full Facebook page URL; empty = icon hidden
 };
 
 // Spec values: a plain string is shown as is in every language;
