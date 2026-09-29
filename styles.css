@@ -469,3 +469,19 @@ html.modal-open { overflow: hidden; }
   .uzmap__label, .uzmap__leader, .uzmap__sea-label { display: none; }
   .delivery__cta .btn { flex: 1 1 100%; }
 }
+
+/* social icons */
+.socials-block { margin-top: 28px; }
+.socials-block__title { margin: 0 0 14px; font-size: .85rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+.socials { display: flex; flex-wrap: wrap; gap: 14px; }
+.social { display: grid; place-items: center; width: 56px; height: 56px; border-radius: 16px; color: #fff; transition: transform .2s, box-shadow .2s; }
+.social svg { width: 28px; height: 28px; fill: currentColor; }
+.social:hover { transform: translateY(-3px); }
+.social--youtube { background: #e62f22; box-shadow: 0 10px 24px -8px rgba(230, 47, 34, .6); }
+.social--telegram { background: #2aa3df; box-shadow: 0 10px 24px -8px rgba(42, 163, 223, .6); }
+.social--facebook { background: #1877f2; box-shadow: 0 10px 24px -8px rgba(24, 119, 242, .6); }
+.social--instagram { background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fd5949 45%, #d6249f 60%, #285aeb 90%); box-shadow: 0 10px 24px -8px rgba(214, 36, 159, .6); }
+.socials--sm { gap: 10px; }
+.socials--sm .social { width: 36px; height: 36px; border-radius: 10px; box-shadow: none; }
+.socials--sm .social svg { width: 19px; height: 19px; }
+.footer__inner { align-items: center; }

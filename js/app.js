@@ -76,6 +76,7 @@
     $$('.lang button').forEach((b) => b.classList.toggle('is-active', b.dataset.lang === lang));
     store.set('localStorage', 'lang', lang);
     renderContacts();
+    renderSocials();
     if (page === 'home') { renderCatalog(); renderRange(); }
     if (page === 'product') renderProduct();
     if (page === 'success') renderSuccess();
@@ -104,6 +105,24 @@
       email: CONTACTS.email && `<a href="mailto:${encodeURIComponent(CONTACTS.email).replace('%40', '@')}">${esc(CONTACTS.email)}</a>`,
     };
     $$('[data-contact]').forEach((el) => { el.innerHTML = links[el.dataset.contact] || `<span class="pending">${t('pending')}</span>`; });
+  }
+
+  // Social icons: <div data-socials></div>. Networks without a link are skipped.
+  const SOCIAL_ICONS = {
+    youtube: '<path d="M21.6 7.2a2.5 2.5 0 0 0-1.8-1.8C18.2 5 12 5 12 5s-6.2 0-7.8.4A2.5 2.5 0 0 0 2.4 7.2 26 26 0 0 0 2 12a26 26 0 0 0 .4 4.8 2.5 2.5 0 0 0 1.8 1.8c1.6.4 7.8.4 7.8.4s6.2 0 7.8-.4a2.5 2.5 0 0 0 1.8-1.8A26 26 0 0 0 22 12a26 26 0 0 0-.4-4.8ZM10 15V9l5.2 3L10 15Z"/>',
+    telegram: '<path d="M21.5 4.3 2.9 11.5c-1.3.5-1.3 1.2-.2 1.6l4.8 1.5 1.8 5.6c.2.6.4.8.9.8.4 0 .6-.2.9-.4l2.3-2.2 4.7 3.5c.9.5 1.5.2 1.7-.8l3.1-14.5c.3-1.3-.5-1.8-1.4-1.3ZM8.6 14.2l9.5-6c.5-.3.9-.1.5.2l-7.9 7.1-.3 3.3-1.8-4.6Z"/>',
+    facebook: '<path d="M13.5 22v-8.2h2.8l.4-3.2h-3.2V8.5c0-.9.3-1.6 1.6-1.6h1.7V4.1c-.3 0-1.3-.1-2.5-.1-2.5 0-4.2 1.5-4.2 4.3v2.3H7.3v3.2h2.8V22h3.4Z"/>',
+    instagram: '<path d="M12 7.3a4.7 4.7 0 1 0 0 9.4 4.7 4.7 0 0 0 0-9.4Zm0 7.7a3 3 0 1 1 0-6 3 3 0 0 1 0 6Zm4.9-8.9a1.1 1.1 0 1 0 0 2.2 1.1 1.1 0 0 0 0-2.2ZM12 3c-2.4 0-2.7 0-3.7.1-3.3.1-5 1.9-5.2 5.2C3 9.3 3 9.6 3 12s0 2.7.1 3.7c.1 3.3 1.9 5 5.2 5.2 1 .1 1.3.1 3.7.1s2.7 0 3.7-.1c3.3-.1 5-1.9 5.2-5.2.1-1 .1-1.3.1-3.7s0-2.7-.1-3.7c-.1-3.3-1.9-5-5.2-5.2C14.7 3 14.4 3 12 3Zm0 1.6c2.4 0 2.7 0 3.6.1 2.4.1 3.5 1.2 3.6 3.6.1.9.1 1.2.1 3.6s0 2.7-.1 3.6c-.1 2.4-1.2 3.5-3.6 3.6-.9.1-1.2.1-3.6.1s-2.7 0-3.6-.1c-2.4-.1-3.5-1.2-3.6-3.6-.1-.9-.1-1.2-.1-3.6s0-2.7.1-3.6c.1-2.4 1.2-3.5 3.6-3.6.9-.1 1.2-.1 3.6-.1Z"/>',
+  };
+  function renderSocials() {
+    const links = [
+      ['youtube', 'YouTube', CONTACTS.youtube],
+      ['telegram', 'Telegram', CONTACTS.telegramChannel && `https://t.me/${encodeURIComponent(CONTACTS.telegramChannel)}`],
+      ['facebook', 'Facebook', CONTACTS.facebook],
+      ['instagram', 'Instagram', CONTACTS.instagram && `https://instagram.com/${encodeURIComponent(CONTACTS.instagram)}`],
+    ].filter(([, , url]) => url);
+    const html = links.map(([k, label, url]) => `<a class="social social--${k}" href="${esc(url)}" target="_blank" rel="noopener" aria-label="${label}"><svg viewBox="0 0 24 24" aria-hidden="true">${SOCIAL_ICONS[k]}</svg></a>`).join('');
+    $$('[data-socials]').forEach((el) => { el.innerHTML = html; });
   }
 
   // "Contact via Telegram" buttons: open the chat, or explain that it is not set up yet.
