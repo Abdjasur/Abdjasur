@@ -100,6 +100,8 @@
       phone: CONTACTS.phone && `<a href="${telHref(CONTACTS.phone)}">${esc(CONTACTS.phone)}</a>`,
       telegram: CONTACTS.telegram && `<a href="${tgUrl()}" target="_blank" rel="noopener">@${esc(CONTACTS.telegram)}</a>`,
       instagram: CONTACTS.instagram && `<a href="https://instagram.com/${encodeURIComponent(CONTACTS.instagram)}" target="_blank" rel="noopener">@${esc(CONTACTS.instagram)}</a>`,
+      telegramChannel: CONTACTS.telegramChannel && `<a href="https://t.me/${encodeURIComponent(CONTACTS.telegramChannel)}" target="_blank" rel="noopener">@${esc(CONTACTS.telegramChannel)}</a>`,
+      email: CONTACTS.email && `<a href="mailto:${encodeURIComponent(CONTACTS.email).replace('%40', '@')}">${esc(CONTACTS.email)}</a>`,
     };
     $$('[data-contact]').forEach((el) => { el.innerHTML = links[el.dataset.contact] || `<span class="pending">${t('pending')}</span>`; });
   }

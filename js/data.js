@@ -6,9 +6,11 @@
 // Public contacts. Leave a value empty ('') and the site shows "to be added".
 // (The Telegram BOT token is NOT here — it lives only on the server, see README.)
 window.CONTACTS = {
-  phone: '',      // e.g. '+998 90 123 45 67'
-  telegram: '',   // manager's Telegram username without @, e.g. 'axpedestal'
-  instagram: '',  // Instagram username without @
+  phone: '+998 90 207 50 20',      // e.g. '+998 90 123 45 67'
+  telegram: '',                    // manager's Telegram username without @, e.g. 'axpedestal'
+  telegramChannel: 'axpedestal',   // public Telegram channel username without @
+  instagram: 'axpedestal_com',     // Instagram username without @
+  email: 'axpedestal@gmail.com',
 };
 
 // Spec values: a plain string is shown as is in every language;
