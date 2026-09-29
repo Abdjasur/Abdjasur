@@ -78,7 +78,8 @@
     renderContacts();
     renderSocials();
     renderRowIcons();
-    if (page === 'home') { renderCatalog(); renderRange(); }
+    renderFooterProducts();
+    if (page === 'home') { renderCatalog(); renderRange(); renderSpecTable(); }
     if (page === 'product') renderProduct();
     if (page === 'success') renderSuccess();
     if (modal) renderModalOptions();
@@ -172,6 +173,31 @@
           </div>
         </div>
       </article>`).join('');
+  }
+
+  // Footer product links: every pedestal plus the accessories filter.
+  function renderFooterProducts() {
+    const peds = PRODUCTS.filter((p) => p.category !== 'accessory');
+    const html = peds.map((p) => `<li><a href="${productUrl(p)}">${esc(p.code)} <small>${esc(p.height)}</small></a></li>`).join('')
+      + `<li><a href="index.html#catalog">${t('ft.accessories')}</a></li>`;
+    $$('[data-footer-products]').forEach((el) => { el.innerHTML = html; });
+  }
+
+  // Technical comparison table of all pedestals (values straight from PRODUCTS).
+  function renderSpecTable() {
+    const box = $('#specTable');
+    if (!box) return;
+    const spec = (p, key) => (p.specs.find(([k]) => k === key) || [])[1];
+    const tops = (p) => (p.category === 'fixed' ? [t('specs.tile')] : [t('specs.tile'), t('specs.deck')]);
+    const rows = PRODUCTS.filter((p) => p.category !== 'accessory').map((p) => `
+      <tr>
+        <th scope="row"><a href="${productUrl(p)}"><img src="${esc(p.image)}" alt="" loading="lazy">${esc(p.code)}</a></th>
+        <td>${esc(p.height)}</td>
+        <td>${esc(p.load || '—')}</td>
+        <td>${esc(spec(p, 's.size') || '—')}</td>
+        <td>${tops(p).map((x) => `<span class="tag">${esc(x)}</span>`).join(' ')}</td>
+      </tr>`).join('');
+    box.innerHTML = `<thead><tr><th scope="col">${t('specs.model')}</th><th scope="col">${t('specs.height')}</th><th scope="col">${t('specs.load')}</th><th scope="col">${t('specs.size')}</th><th scope="col">${t('specs.top')}</th></tr></thead><tbody>${rows}</tbody>`;
   }
 
   // Height range chart: every pedestal on one 0–340 mm scale

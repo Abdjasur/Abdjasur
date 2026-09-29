@@ -96,6 +96,18 @@
       </div>
     </section>
 
+    <section class="section cmp" id="specs">
+      <div class="container cmp__inner">
+        <div class="cmp__intro">
+          <p class="eyebrow" data-i18n="specs.eyebrow">Texnik ma'lumotlar</p>
+          <h2 data-i18n="specs.title">Tayanchlarni solishtiring</h2>
+          <p class="lead" data-i18n="specs.lead"></p>
+          <button type="button" class="btn btn--primary" data-order="" data-i18n="order">Buyurtma berish</button>
+        </div>
+        <div class="cmp__table-wrap"><table class="cmp__table" id="specTable"></table></div>
+      </div>
+    </section>
+
     <section class="section" id="advantages">
       <div class="container">
         <p class="eyebrow" data-i18n="adv.eyebrow">Afzalliklar</p>
@@ -255,11 +267,41 @@
     </section>
   </main>
 
+  <section class="cta-band">
+    <div class="container cta-band__inner">
+      <div>
+        <p class="cta-band__eyebrow" data-i18n="cta.eyebrow">Loyihangiz uchun</p>
+        <h2 data-i18n="cta.title">Loyihangizni boshlashga tayyormisiz?</h2>
+      </div>
+      <p class="cta-band__text" data-i18n="cta.text"></p>
+      <div class="cta-band__actions">
+        <a class="btn btn--primary btn--lg" href="index.html#contact" data-i18n="order">Buyurtma berish</a>
+      </div>
+    </div>
+  </section>
   <footer class="footer">
-    <div class="container footer__inner">
-      <span>© <span id="year"></span> AX Pedestal · ECO PRODUCTS</span>
-      <div class="socials socials--sm" data-socials></div>
-      <span data-i18n="footer.tag">Farg'ona, O'zbekiston</span>
+    <div class="container footer__grid">
+      <div class="footer__brand">
+        <a href="index.html#top" class="footer__logo"><img src="images/logo-mark.png" alt="" width="40" height="40"><span><b>AX PEDESTAL</b><small>ECO PRODUCTS</small></span></a>
+        <p data-i18n="ft.about"></p>
+        <div class="socials socials--sm" data-socials></div>
+      </div>
+      <nav class="footer__col" aria-labelledby="ft-products"><h3 id="ft-products" data-i18n="ft.products">Mahsulotlar</h3><ul data-footer-products></ul></nav>
+      <nav class="footer__col" aria-labelledby="ft-uses"><h3 id="ft-uses" data-i18n="ft.uses">Qo'llanilishi</h3><ul>
+        <li><a href="index.html#uses" data-i18n="u1"></a></li><li><a href="index.html#uses" data-i18n="u2"></a></li><li><a href="index.html#uses" data-i18n="u3"></a></li>
+        <li><a href="index.html#uses" data-i18n="u4"></a></li><li><a href="index.html#uses" data-i18n="u6"></a></li></ul></nav>
+      <nav class="footer__col" aria-labelledby="ft-pages"><h3 id="ft-pages" data-i18n="ft.pages">Sahifalar</h3><ul>
+        <li><a href="index.html#catalog" data-i18n="nav.catalog"></a></li><li><a href="index.html#specs" data-i18n="specs.eyebrow"></a></li><li><a href="index.html#advantages" data-i18n="adv.eyebrow"></a></li>
+        <li><a href="index.html#services" data-i18n="nav.services"></a></li><li><a href="index.html#delivery" data-i18n="nav.delivery"></a></li></ul></nav>
+      <div class="footer__col"><h3 data-i18n="ft.contact">Aloqa</h3><ul class="footer__contacts">
+        <li><i class="ci ci--phone" data-icon="phone"></i><span data-contact="phone"></span></li>
+        <li><i class="ci ci--email" data-icon="email"></i><span data-contact="email"></span></li>
+        <li><i class="ci ci--telegram" data-icon="telegram"></i><span data-contact="telegram"></span></li>
+        <li><i class="ci ci--address" data-icon="address"></i><span data-i18n="footer.tag"></span></li></ul></div>
+    </div>
+    <div class="container footer__bottom">
+      <span>© <span id="year"></span> AX Pedestal · ECO PRODUCTS. <span data-i18n="ft.rights"></span></span>
+      <a href="https://axpedestal.com">axpedestal.com</a>
     </div>
   </footer>
 

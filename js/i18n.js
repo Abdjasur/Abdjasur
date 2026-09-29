@@ -87,6 +87,7 @@ window.I18N = {
     'range.lead': "Kerakli balandlikni tanlang. PS uzaytiruvchi mufta balandlikni yana 100 mm ga oshiradi — umumiy diapazon 20 mm dan 620 mm gacha.",
     u6: "Ichki ko'tarilgan pollar",
     'footer.tag': "Farg'ona, O'zbekiston",
+    "specs.eyebrow": "Texnik ma'lumotlar", "specs.title": "Tayanchlarni solishtiring", "specs.lead": "Barcha tayanchlar UV nurlanishiga chidamli polipropilendan (PP) tayyorlangan. Loyihangizga mos balandlikni tanlang.", "specs.model": "Model", "specs.height": "Balandlik", "specs.load": "Yuk (1 dona)", "specs.size": "O'lchami", "specs.top": "Qoplama", "specs.tile": "Plitka", "specs.deck": "Terassa taxtasi", "cta.eyebrow": "Loyihangiz uchun", "cta.title": "Loyihangizni boshlashga tayyormisiz?", "cta.text": "Mutaxassisimiz loyihangizga mos tayanch va aksessuarlarni tanlashda bepul maslahat beradi.", "ft.about": "Rostlanadigan plastik tayanchlar — terassa, tom va balkonlar uchun zamonaviy yechim.", "ft.products": "Mahsulotlar", "ft.uses": "Qo'llanilishi", "ft.pages": "Sahifalar", "ft.contact": "Aloqa", "ft.accessories": "Aksessuarlar", "ft.rights": "Barcha huquqlar himoyalangan.",
   },
   ru: {
     pending: 'будет добавлено',
@@ -175,6 +176,7 @@ window.I18N = {
     'range.lead': 'Выберите нужную высоту. Удлинительная муфта PS добавляет ещё 100 мм — общий диапазон от 20 до 620 мм.',
     u6: 'Внутренние приподнятые полы',
     'footer.tag': 'Фергана, Узбекистан',
+    "specs.eyebrow": "Технические данные", "specs.title": "Сравните опоры", "specs.lead": "Все опоры изготовлены из полипропилена (PP), устойчивого к УФ-излучению. Выберите высоту под ваш проект.", "specs.model": "Модель", "specs.height": "Высота", "specs.load": "Нагрузка (1 шт.)", "specs.size": "Размеры", "specs.top": "Покрытие", "specs.tile": "Плитка", "specs.deck": "Террасная доска", "cta.eyebrow": "Для вашего проекта", "cta.title": "Готовы начать ваш проект?", "cta.text": "Наш специалист бесплатно поможет подобрать опоры и аксессуары под ваш проект.", "ft.about": "Регулируемые пластиковые опоры — современное решение для террас, кровель и балконов.", "ft.products": "Продукция", "ft.uses": "Применение", "ft.pages": "Разделы", "ft.contact": "Контакты", "ft.accessories": "Аксессуары", "ft.rights": "Все права защищены.",
   },
   en: {
     pending: 'to be added',
@@ -263,5 +265,6 @@ window.I18N = {
     'range.lead': 'Choose the height you need. The PS extension coupling adds another 100 mm — the full range is 20 to 620 mm.',
     u6: 'Indoor raised floors',
     'footer.tag': 'Fergana, Uzbekistan',
+    "specs.eyebrow": "Technical data", "specs.title": "Compare the pedestals", "specs.lead": "All pedestals are made of UV-resistant polypropylene (PP). Pick the height that fits your project.", "specs.model": "Model", "specs.height": "Height", "specs.load": "Load (per unit)", "specs.size": "Size", "specs.top": "Surface", "specs.tile": "Tiles", "specs.deck": "Decking", "cta.eyebrow": "For your project", "cta.title": "Ready to start your project?", "cta.text": "Our specialist will help you choose the right pedestals and accessories for your project, free of charge.", "ft.about": "Adjustable plastic pedestals — a modern solution for terraces, roofs and balconies.", "ft.products": "Products", "ft.uses": "Applications", "ft.pages": "Sections", "ft.contact": "Contact", "ft.accessories": "Accessories", "ft.rights": "All rights reserved.",
   },
 };
