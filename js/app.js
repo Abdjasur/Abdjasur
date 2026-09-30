@@ -6,6 +6,7 @@
   const ORDER_API_URL = window.ORDER_API_URL || '/api/orders';
   const DRAFT_KEY = 'ax-order-draft';
   const LAST_ORDER_KEY = 'ax-last-order';
+  const CART_KEY = 'ax-cart';
   // Standalone build (one HTML file, see tools/build-single.mjs): pages are views switched by the URL hash
   const STANDALONE = document.body.dataset.standalone === 'true';
   const hashParam = (k) => new URLSearchParams(location.hash.slice(1)).get(k);
@@ -79,6 +80,7 @@
     renderSocials();
     renderRowIcons();
     renderFooterProducts();
+    if ($('#cartFab')) renderCart();
     if (page === 'home') { renderCatalog(); renderRange(); renderSpecTable(); }
     if (page === 'product') renderProduct();
     if (page === 'success') renderSuccess();
@@ -174,7 +176,7 @@
             <button type="button" data-step="1" aria-label="${t('m.increase')}">+</button>
           </div>
           <div class="product__actions">
-            <button type="button" class="btn btn--primary btn--sm" data-order="${esc(p.slug)}" data-order-card>${t('order')}</button>
+            <button type="button" class="btn btn--primary btn--sm" data-add-cart="${esc(p.slug)}">${CART_ICON}<span>${t('cart.add')}</span></button>
             <a class="btn btn--ghost btn--sm" href="${productUrl(p)}">${t('details')}</a>
           </div>
         </div>
@@ -275,7 +277,7 @@
               <button type="button" data-step="1" aria-label="${t('m.increase')}">+</button>
               <span class="qty__unit">${t('pcs')}</span>
             </div>
-            <button type="button" class="btn btn--primary btn--lg" data-order="${esc(p.slug)}" data-order-qty>${t('order')}</button>
+            <button type="button" class="btn btn--primary btn--lg" data-add-cart="${esc(p.slug)}" data-add-qty>${CART_ICON}<span>${t('cart.add')}</span></button>
             <button type="button" class="btn btn--tg btn--lg" data-tg-contact>${TG_ICON}<span>${t('tgContact')}</span></button>
           </div>
           <ul class="pp__perks">
@@ -300,6 +302,103 @@
     input.addEventListener('blur', () => { input.value = clampQty(input.value); onChange(Number(input.value)); input.dispatchEvent(new Event('input', { bubbles: true })); });
   }
 
+  // ---------------- cart ----------------
+  // [{ slug, qty }] in localStorage: survives reloads and page changes until the order is sent.
+  const CART_ICON = '<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 4h2l2.4 11.2a2 2 0 0 0 2 1.6h7.7a2 2 0 0 0 2-1.5L21 8H6.2"/><circle cx="10" cy="20.5" r="1.3"/><circle cx="17" cy="20.5" r="1.3"/></svg>';
+  const cartItems = () => (store.get('localStorage', CART_KEY) || []).filter((it) => productBySlug(it.slug));
+  const cartUnits = () => cartItems().reduce((n, it) => n + it.qty, 0);
+  function saveCart(items) { store.set('localStorage', CART_KEY, items); renderCart(); }
+  function addToCart(slug, qty) {
+    const items = cartItems();
+    const hit = items.find((it) => it.slug === slug);
+    if (hit) hit.qty = clampQty(hit.qty + qty); else items.push({ slug, qty: clampQty(qty) });
+    saveCart(items);
+    const fab = $('#cartFab');
+    if (fab) { fab.classList.remove('is-bump'); void fab.offsetWidth; fab.classList.add('is-bump'); }
+  }
+  function setCartQty(slug, qty) { saveCart(cartItems().map((it) => (it.slug === slug ? { ...it, qty: clampQty(qty) } : it))); }
+  function removeFromCart(slug) { saveCart(cartItems().filter((it) => it.slug !== slug)); }
+
+  function buildCart() {
+    const fab = document.createElement('button');
+    fab.type = 'button';
+    fab.className = 'cart-fab';
+    fab.id = 'cartFab';
+    fab.hidden = true;
+    fab.innerHTML = `${CART_ICON}<span class="cart-fab__count" id="cartCount">0</span>`;
+    const panel = document.createElement('div');
+    panel.className = 'cart';
+    panel.id = 'cartPanel';
+    panel.hidden = true;
+    panel.innerHTML = `
+      <div class="cart__backdrop" data-cart-close></div>
+      <aside class="cart__panel" role="dialog" aria-modal="true" aria-labelledby="cartTitle">
+        <div class="cart__head"><h2 id="cartTitle">${CART_ICON}<span data-i18n="cart.title"></span></h2><button type="button" class="modal__x" data-cart-close data-i18n-aria="m.close">×</button></div>
+        <div class="cart__body" id="cartBody"></div>
+        <div class="cart__foot" id="cartFoot"></div>
+      </aside>`;
+    document.body.append(fab, panel);
+    fab.addEventListener('click', openCart);
+    $$('[data-cart-close]', panel).forEach((el) => el.addEventListener('click', closeCart));
+    panel.addEventListener('click', (e) => {
+      const step = e.target.closest('[data-cart-step]');
+      if (step) { const it = cartItems().find((x) => x.slug === step.dataset.slug); if (it) setCartQty(it.slug, it.qty + Number(step.dataset.cartStep)); }
+      const del = e.target.closest('[data-cart-remove]');
+      if (del) removeFromCart(del.dataset.cartRemove);
+      if (e.target.closest('[data-cart-clear]')) saveCart([]);
+      if (e.target.closest('[data-cart-checkout]')) { closeCart(); openOrder(undefined, undefined, true); }
+      if (e.target.closest('[data-cart-continue]')) closeCart();
+    });
+    panel.addEventListener('change', (e) => { if (e.target.dataset.cartQty) setCartQty(e.target.dataset.cartQty, e.target.value); });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !panel.hidden) closeCart(); });
+    window.addEventListener('storage', (e) => { if (e.key === CART_KEY) renderCart(); }); // another tab changed the cart
+  }
+
+  function renderCart() {
+    const items = cartItems();
+    const fab = $('#cartFab');
+    if (fab) {
+      fab.hidden = !items.length;
+      $('#cartCount').textContent = items.length;
+      fab.setAttribute('aria-label', `${t('cart.title')}: ${items.length}`);
+    }
+    const body = $('#cartBody');
+    if (!body) return;
+    body.innerHTML = items.length ? `<ul class="cart__list">${items.map(({ slug, qty: n }) => { const p = productBySlug(slug); return `
+      <li class="cart__item">
+        <a class="cart__img" href="${productUrl(p)}">${p.image ? `<img src="${esc(p.image)}" alt="" loading="lazy">` : ''}</a>
+        <div class="cart__info"><b>${esc(p.code)}</b><span>${esc(typeName(p))}</span>
+          <div class="qty qty--cart" role="group" aria-label="${t('pp.qty')} ${esc(p.code)}">
+            <button type="button" data-cart-step="-1" data-slug="${esc(slug)}" aria-label="${t('m.decrease')}">−</button>
+            <input type="number" inputmode="numeric" min="1" max="100000" value="${n}" data-cart-qty="${esc(slug)}" aria-label="${t('pp.qty')} ${esc(p.code)}">
+            <button type="button" data-cart-step="1" data-slug="${esc(slug)}" aria-label="${t('m.increase')}">+</button>
+          </div>
+        </div>
+        <button type="button" class="cart__del" data-cart-remove="${esc(slug)}" aria-label="${t('cart.remove')} ${esc(p.code)}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v6M14 11v6"/></svg></button>
+      </li>`; }).join('')}</ul>` : `<div class="cart__empty">${CART_ICON}<p>${t('cart.empty')}</p></div>`;
+    $('#cartFoot').innerHTML = items.length ? `
+      <div class="cart__total"><span>${t('cart.positions')}: <b>${items.length}</b></span><span>${t('cart.units')}: <b>${cartUnits()} ${t('pcs')}</b></span></div>
+      <button type="button" class="btn btn--primary btn--lg btn--block" data-cart-checkout>${t('cart.checkout')}</button>
+      <div class="cart__links"><button type="button" data-cart-continue>${t('cart.continue')}</button><button type="button" data-cart-clear>${t('cart.clear')}</button></div>`
+      : `<button type="button" class="btn btn--ghost btn--lg btn--block" data-cart-continue>${t('cart.continue')}</button>`;
+  }
+  function openCart() {
+    const panel = $('#cartPanel');
+    renderCart();
+    panel.hidden = false;
+    document.documentElement.classList.add('modal-open');
+    requestAnimationFrame(() => panel.classList.add('is-open'));
+    $('.cart__head .modal__x', panel).focus({ preventScroll: true });
+  }
+  function closeCart() {
+    const panel = $('#cartPanel');
+    if (!panel || panel.hidden) return;
+    panel.classList.remove('is-open');
+    panel.hidden = true;
+    document.documentElement.classList.remove('modal-open');
+    $('#cartFab')?.focus({ preventScroll: true });
+  }
+
   // ---------------- order modal ----------------
   let modal = null;
   let lastFocus = null;
@@ -321,12 +420,13 @@
           <div class="order__body">
             <p class="order__req"><span class="req">*</span> — <span data-i18n="m.required"></span></p>
             <p class="order__draft" id="draftNote" hidden data-i18n="m.draft"></p>
-            <div class="field field--wide">
+            <div class="field field--wide order__items" id="orderItems" hidden></div>
+            <div class="field field--wide order__single">
               <label for="f-product"><span data-i18n="m.product"></span> <span class="req">*</span></label>
               <select id="f-product" name="product" required></select>
               <p class="field__err" id="err-product"></p>
             </div>
-            <div class="field">
+            <div class="field order__single">
               <label for="f-quantity"><span data-i18n="m.qty"></span> <span class="req">*</span></label>
               <div class="qty qty--field">
                 <button type="button" data-step="-1" data-i18n-aria="m.decrease">−</button>
@@ -395,9 +495,18 @@
   }
   const phoneDigits = (v) => v.replace(/\D/g, '').replace(/^998/, '');
 
+  let cartMode = false; // true when the modal submits the whole cart
   function formData() {
     const f = $('#orderForm').elements;
     const regionIdx = f.region.value;
+    if (cartMode) {
+      const items = cartItems().map(({ slug, qty: n }) => ({ slug, product: productName(productBySlug(slug), tUz), quantity: n }));
+      return {
+        items, slug: '', product: items.length ? 'cart' : '', quantity: items.reduce((a, it) => a + it.quantity, 0),
+        name: f.name.value.trim(), phone: f.phone.value.trim(), regionIdx,
+        region: regionIdx === '' ? '' : I18N.uz.regions[regionIdx], address: f.address.value.trim(), comment: f.comment.value.trim(), website: f.website.value,
+      };
+    }
     return {
       slug: f.product.value,
       product: productBySlug(f.product.value) ? productName(productBySlug(f.product.value), tUz) : '', // Uzbek name for the manager
@@ -423,8 +532,10 @@
 
   function validate(data) {
     const errors = {};
-    if (!data.product) errors.product = t('e.required');
-    if (!Number.isInteger(data.quantity) || data.quantity < 1 || data.quantity > 100000) errors.quantity = t('e.qty');
+    if (!data.items) {
+      if (!data.product) errors.product = t('e.required');
+      if (!Number.isInteger(data.quantity) || data.quantity < 1 || data.quantity > 100000) errors.quantity = t('e.qty');
+    }
     if (!data.name) errors.name = t('e.required');
     if (phoneDigits(data.phone).length !== 9) errors.phone = data.phone.replace(/\D/g, '').length > 3 ? t('e.phone') : t('e.required');
     if (data.regionIdx === '') errors.region = t('e.required');
@@ -439,9 +550,19 @@
     store.set('localStorage', DRAFT_KEY, { ...draft, slug: d.slug, quantity: d.quantity, name: d.name, phone: d.phone, regionIdx: d.regionIdx, address: d.address, comment: d.comment });
   }
 
-  function openOrder(slug, quantity) {
+  function openOrder(slug, quantity, fromCart = false) {
     if (!modal) return;
+    // A generic "order" button while the cart has items: order the cart.
+    cartMode = fromCart || (!slug && cartItems().length > 0);
     const f = $('#orderForm').elements;
+    $$('.order__single', modal).forEach((el) => { el.hidden = cartMode; });
+    const box = $('#orderItems');
+    box.hidden = !cartMode;
+    if (cartMode) {
+      box.innerHTML = `<p class="order__items-h">${t('m.product')} <button type="button" class="order__edit" data-edit-cart>${t('cart.edit')}</button></p>
+        <ul>${cartItems().map(({ slug: s, qty: n }) => `<li><span>${esc(productBySlug(s).code)}</span><b>${n} ${t('pcs')}</b></li>`).join('')}</ul>
+        <p class="order__items-total">${t('cart.units')}: <b>${cartUnits()} ${t('pcs')}</b></p>`;
+    }
     const draft = store.get('localStorage', DRAFT_KEY);
     // A fresh idempotency key per order attempt; kept in the draft so a retry after an error is not duplicated.
     if (!draft?.key) store.set('localStorage', DRAFT_KEY, { ...(draft || {}), key: crypto.randomUUID ? crypto.randomUUID() : String(Date.now()) + Math.random() });
@@ -486,6 +607,7 @@
     const data = formData();
     saveDraft();
     const errors = validate(data);
+    if (data.items && !data.items.length) { showStatus(t('cart.empty')); return; }
     if (Object.keys(errors).length) {
       showStatus(t('e.form'));
       $(`#f-${Object.keys(errors)[0]}`)?.focus();
@@ -501,7 +623,8 @@
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          product: data.product, quantity: data.quantity, name: data.name, phone: data.phone,
+          ...(data.items ? { items: data.items.map(({ product, quantity }) => ({ product, quantity })) } : { product: data.product, quantity: data.quantity }),
+          name: data.name, phone: data.phone,
           region: data.region, address: data.address, comment: data.comment, website: data.website,
           idempotencyKey: store.get('localStorage', DRAFT_KEY)?.key,
         }),
@@ -510,11 +633,13 @@
       if (res.ok && body.ok) {
         store.set('sessionStorage', LAST_ORDER_KEY, { id: body.id, ...data });
         store.remove('localStorage', DRAFT_KEY);
+        if (data.items) store.remove('localStorage', CART_KEY);
         if (STANDALONE) { closeOrder(); location.hash = `success=${encodeURIComponent(body.id)}`; } else location.href = `order-success.html?id=${encodeURIComponent(body.id)}`;
         return;
       }
       if (res.status === 400 && body.fields) {
         Object.keys(body.fields).forEach((k) => setFieldError(k, k === 'phone' ? t('e.phone') : k === 'quantity' ? t('e.qty') : t('e.required')));
+        if (body.fields.items) { closeOrder(); openCart(); return; }
         showStatus(t('e.form'));
       } else if (res.status === 429) showStatus(t('e.rate'));
       else showStatus(t('e.server'));
@@ -534,8 +659,9 @@
     if (Object.keys(validate(data)).length) { showStatus(t('e.form')); return; }
     const text = [
       `${t('tg.heading')} — AX Pedestal`,
-      `${t('m.product')}: ${data.product}`,
-      `${t('m.qty')}: ${data.quantity} ${t('pcs')}`,
+      ...(data.items
+        ? [`${t('m.product')}:`, ...data.items.map((it, i) => `${i + 1}. ${productBySlug(it.slug).code} — ${it.quantity} ${t('pcs')}`)]
+        : [`${t('m.product')}: ${data.product}`, `${t('m.qty')}: ${data.quantity} ${t('pcs')}`]),
       `${t('m.name')}: ${data.name}`,
       `${t('m.phone')}: ${data.phone}`,
       `${t('m.address')}: ${t('regions')[data.regionIdx]}, ${data.address}`,
@@ -565,6 +691,7 @@
     form.addEventListener('submit', submitOrder);
     $('#orderTg').addEventListener('click', orderViaTelegram);
     $$('[data-close]', modal).forEach((el) => el.addEventListener('click', closeOrder));
+    modal.addEventListener('click', (e) => { if (e.target.closest('[data-edit-cart]')) { closeOrder(); openCart(); } });
     document.addEventListener('keydown', (e) => {
       if (modal.hidden) return;
       if (e.key === 'Escape') closeOrder();
@@ -574,6 +701,17 @@
         if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
         else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
       }
+    });
+    document.addEventListener('click', (e) => {
+      const add = e.target.closest('[data-add-cart]');
+      if (!add) return;
+      const cardInput = $('[data-card-qty]', add.closest('.product') || document.createElement('div'));
+      addToCart(add.dataset.addCart, add.hasAttribute('data-add-qty') ? qty : cardInput ? clampQty(cardInput.value) : 1);
+      const label = $('span', add);
+      add.classList.add('is-added');
+      label.textContent = t('cart.added');
+      clearTimeout(add._t);
+      add._t = setTimeout(() => { add.classList.remove('is-added'); label.textContent = t('cart.add'); }, 1600);
     });
     document.addEventListener('click', (e) => {
       const btn = e.target.closest('[data-order]');
@@ -595,7 +733,8 @@
     const summary = o && o.id === id ? `
       <h2 class="success__h">${t('s.summary')}</h2>
       <dl class="specs specs--summary">
-        <div><dt>${t('m.product')}</dt><dd>${esc(productBySlug(o.slug) ? productName(productBySlug(o.slug)) : o.product)}</dd></div>
+        ${o.items ? `<div><dt>${t('m.product')}</dt><dd><ul>${o.items.map((it) => `<li>${esc(productBySlug(it.slug)?.code || it.product)} — ${esc(it.quantity)} ${t('pcs')}</li>`).join('')}</ul></dd></div>`
+    : `<div><dt>${t('m.product')}</dt><dd>${esc(productBySlug(o.slug) ? productName(productBySlug(o.slug)) : o.product)}</dd></div>`}
         <div><dt>${t('m.qty')}</dt><dd>${esc(o.quantity)} ${t('pcs')}</dd></div>
         <div><dt>${t('m.name')}</dt><dd>${esc(o.name)}</dd></div>
         <div><dt>${t('m.phone')}</dt><dd>${esc(o.phone)}</dd></div>
@@ -625,6 +764,7 @@
   });
   initHeader();
   if (STANDALONE || page !== 'success') initModal();
+  buildCart();
   if (STANDALONE) {
     const showView = () => $$('[data-view]').forEach((v) => { v.hidden = v.dataset.view !== page; });
     showView();

@@ -42,6 +42,7 @@ const SECURITY_HEADERS = {
 
 // ---------- validation ----------
 const LIMITS = { product: 120, name: 80, region: 60, address: 300, comment: 1000 };
+const MAX_ITEMS = 50;
 
 export function validateOrder(body) {
   const errors = {};
@@ -55,13 +56,25 @@ export function validateOrder(body) {
     address: str(body.address),
     comment: str(body.comment),
   };
-  for (const key of ['product', 'name', 'region', 'address']) {
+  const validQty = (q) => Number.isInteger(q) && q >= 1 && q <= 100000;
+  if (Array.isArray(body.items)) {
+    // Cart order: several products in one request.
+    order.items = body.items.slice(0, MAX_ITEMS).map((it) => ({ product: str(it?.product), quantity: Number(it?.quantity) }));
+    if (!body.items.length || body.items.length > MAX_ITEMS
+      || order.items.some((it) => !it.product || it.product.length > LIMITS.product || !validQty(it.quantity))) errors.items = 'invalid';
+    order.product = order.items.length === 1 ? order.items[0].product : `${order.items.length} ta mahsulot`;
+    order.quantity = order.items.reduce((sum, it) => sum + (validQty(it.quantity) ? it.quantity : 0), 0);
+  } else {
+    if (!order.product) errors.product = 'required';
+    if (!validQty(order.quantity)) errors.quantity = 'invalid';
+    order.items = [{ product: order.product, quantity: order.quantity }];
+  }
+  for (const key of ['name', 'region', 'address']) {
     if (!order[key]) errors[key] = 'required';
   }
   for (const [key, max] of Object.entries(LIMITS)) {
     if (order[key].length > max) errors[key] = 'too_long';
   }
-  if (!Number.isInteger(order.quantity) || order.quantity < 1 || order.quantity > 100000) errors.quantity = 'invalid';
   const digits = order.phone.replace(/\D/g, '');
   if (!order.phone) errors.phone = 'required';
   else if (!/^[+\d\s()-]+$/.test(order.phone) || digits.length < 9 || digits.length > 15) errors.phone = 'invalid';
@@ -73,8 +86,9 @@ export function formatTelegramMessage(o) {
   return [
     `🆕 Yangi buyurtma — ${o.id}`,
     '',
-    `📦 Mahsulot: ${o.product}`,
-    `🔢 Miqdori: ${o.quantity} dona`,
+    ...(o.items && o.items.length > 1
+      ? ['📦 Mahsulotlar:', ...o.items.map((it, i) => `   ${i + 1}. ${it.product} — ${it.quantity} dona`), `🔢 Jami: ${o.quantity} dona`]
+      : [`📦 Mahsulot: ${o.product}`, `🔢 Miqdori: ${o.quantity} dona`]),
     `👤 Mijoz: ${o.name}`,
     `📞 Telefon: ${o.phone}`,
     `📍 Manzil: ${o.region}, ${o.address}`,

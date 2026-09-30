@@ -57,6 +57,30 @@ test('valid order is saved and sent to Telegram with all fields', async () => {
   assert.equal(saved.at(-1).id, data.id);
 });
 
+test('cart order with several products is saved and sent as one message', async () => {
+  const items = [{ product: 'PA-A-03', quantity: 200 }, { product: 'PA-SP-02', quantity: 200 }, { product: 'SH-0135', quantity: 50 }];
+  const { product, quantity, ...rest } = valid;
+  const res = await post({ ...rest, items, idempotencyKey: 'cart1' });
+  const data = await res.json();
+  assert.equal(res.status, 201);
+  const text = received.at(-1).body.text;
+  items.forEach((it, i) => assert.ok(text.includes(`${i + 1}. ${it.product} — ${it.quantity} dona`), it.product));
+  assert.ok(text.includes('Jami: 450 dona'));
+  const saved = (await fs.readFile(path.join(dataDir, 'orders.jsonl'), 'utf8')).trim().split('\n').map(JSON.parse).at(-1);
+  assert.equal(saved.id, data.id);
+  assert.deepEqual(saved.items, items);
+  assert.equal(saved.quantity, 450);
+});
+
+test('cart order rejects empty, oversized or invalid item lists', () => {
+  const { product, quantity, ...rest } = valid;
+  // Checked on validateOrder directly: HTTP requests here would trip the per-IP rate limit for later tests.
+  for (const items of [[], Array.from({ length: 51 }, () => ({ product: 'X', quantity: 1 })), [{ product: 'X', quantity: 0 }], [{ product: '', quantity: 3 }]]) {
+    assert.equal(mod.validateOrder({ ...rest, items }).errors.items, 'invalid', JSON.stringify(items).slice(0, 60));
+  }
+  assert.deepEqual(mod.validateOrder({ ...rest, items: [{ product: 'X', quantity: 2 }] }).errors, {});
+});
+
 test('double submit with the same idempotency key creates one order', async () => {
   const before = received.length;
   const again = await (await post({ ...valid, idempotencyKey: 'k1' })).json();
