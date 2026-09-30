@@ -324,7 +324,6 @@
     fab.type = 'button';
     fab.className = 'cart-fab';
     fab.id = 'cartFab';
-    fab.hidden = true;
     fab.innerHTML = `${CART_ICON}<span class="cart-fab__count" id="cartCount">0</span>`;
     const panel = document.createElement('div');
     panel.className = 'cart';
@@ -358,7 +357,8 @@
     const items = cartItems();
     const fab = $('#cartFab');
     if (fab) {
-      fab.hidden = !items.length;
+      fab.classList.toggle('has-items', items.length > 0);
+      $('#cartCount').hidden = !items.length;
       $('#cartCount').textContent = items.length;
       fab.setAttribute('aria-label', `${t('cart.title')}: ${items.length}`);
     }
@@ -377,6 +377,7 @@
         <button type="button" class="cart__del" data-cart-remove="${esc(slug)}" aria-label="${t('cart.remove')} ${esc(p.code)}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v6M14 11v6"/></svg></button>
       </li>`; }).join('')}</ul>` : `<div class="cart__empty">${CART_ICON}<p>${t('cart.empty')}</p></div>`;
     $('#cartFoot').innerHTML = items.length ? `
+      <p class="cart__note">${t('cart.note')}</p>
       <div class="cart__total"><span>${t('cart.positions')}: <b>${items.length}</b></span><span>${t('cart.units')}: <b>${cartUnits()} ${t('pcs')}</b></span></div>
       <button type="button" class="btn btn--primary btn--lg btn--block" data-cart-checkout>${t('cart.checkout')}</button>
       <div class="cart__links"><button type="button" data-cart-continue>${t('cart.continue')}</button><button type="button" data-cart-clear>${t('cart.clear')}</button></div>`
@@ -561,7 +562,8 @@
     if (cartMode) {
       box.innerHTML = `<p class="order__items-h">${t('m.product')} <button type="button" class="order__edit" data-edit-cart>${t('cart.edit')}</button></p>
         <ul>${cartItems().map(({ slug: s, qty: n }) => `<li><span>${esc(productBySlug(s).code)}</span><b>${n} ${t('pcs')}</b></li>`).join('')}</ul>
-        <p class="order__items-total">${t('cart.units')}: <b>${cartUnits()} ${t('pcs')}</b></p>`;
+        <p class="order__items-total">${t('cart.units')}: <b>${cartUnits()} ${t('pcs')}</b></p>
+        <p class="cart__note">${t('cart.note')}</p>`;
     }
     const draft = store.get('localStorage', DRAFT_KEY);
     // A fresh idempotency key per order attempt; kept in the draft so a retry after an error is not duplicated.
