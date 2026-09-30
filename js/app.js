@@ -72,6 +72,12 @@
     lang = next;
     document.documentElement.lang = lang;
     $$('[data-i18n]').forEach((el) => { el.textContent = t(el.dataset.i18n); });
+    // Images with text baked in: one file per language.
+    $$('[data-lang-src]').forEach((img) => {
+      const ext = JSON.parse(img.dataset.langExt || '{}')[lang] || 'jpg';
+      const src = `${img.dataset.langSrc.replace('{lang}', lang)}.${ext}`;
+      if (img.getAttribute('src') !== src) img.setAttribute('src', src);
+    });
     $$('[data-i18n-ph]').forEach((el) => { el.placeholder = t(el.dataset.i18nPh); });
     $$('[data-i18n-aria]').forEach((el) => { el.setAttribute('aria-label', t(el.dataset.i18nAria)); });
     $$('.lang button').forEach((b) => b.classList.toggle('is-active', b.dataset.lang === lang));
