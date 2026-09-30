@@ -19,7 +19,7 @@
   const routeId = () => (STANDALONE ? hashParam(page) : new URLSearchParams(location.search).get('id'));
   const homeUrl = (anchor = '') => (STANDALONE ? `#${anchor || 'top'}` : `index.html${anchor ? `#${anchor}` : ''}`);
 
-  let lang = 'uz';
+  let lang = 'en';
   const t = (key) => I18N[lang][key] ?? I18N.uz[key] ?? key;
   const $ = (sel, root = document) => root.querySelector(sel);
   const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];
@@ -74,7 +74,7 @@
     $$('[data-i18n-ph]').forEach((el) => { el.placeholder = t(el.dataset.i18nPh); });
     $$('[data-i18n-aria]').forEach((el) => { el.setAttribute('aria-label', t(el.dataset.i18nAria)); });
     $$('.lang button').forEach((b) => b.classList.toggle('is-active', b.dataset.lang === lang));
-    store.set('localStorage', 'lang', lang);
+    store.set('sessionStorage', 'lang', lang); // remembered for this visit only
     renderContacts();
     renderSocials();
     renderRowIcons();
@@ -630,7 +630,8 @@
       else if (page !== prev || page === 'product') window.scrollTo({ top: 0, behavior: 'instant' });
     });
   }
-  applyLang(store.get('localStorage', 'lang') || 'uz');
+  // Every new visit opens in English; a switched language holds across pages until the tab closes.
+  applyLang(store.get('sessionStorage', 'lang') || 'en');
 
   // reveal on scroll (home)
   if ('IntersectionObserver' in window) {
