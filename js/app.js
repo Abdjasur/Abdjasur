@@ -116,6 +116,11 @@
       facebook: CONTACTS.facebook && `<a href="${esc(CONTACTS.facebook)}" target="_blank" rel="noopener">${esc(CONTACTS.facebook.replace(/^https?:\/\/(www\.)?/, ''))}</a>`,
       email: CONTACTS.email && `<a href="mailto:${encodeURIComponent(CONTACTS.email).replace('%40', '@')}">${esc(CONTACTS.email)}</a>`,
     };
+    $$('[data-call]').forEach((a) => {
+      if (!CONTACTS.phone) { a.hidden = true; return; }
+      a.href = telHref(CONTACTS.phone);
+      $('[data-call-number]', a).textContent = CONTACTS.phone;
+    });
     $$('[data-contact]').forEach((el) => { el.innerHTML = links[el.dataset.contact] || `<span class="pending">${t('pending')}</span>`; });
   }
 
