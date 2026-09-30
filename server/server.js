@@ -27,11 +27,11 @@ const RETRY_INTERVAL_MS = Number(process.env.RETRY_INTERVAL_MS) || 60_000;
 const ALLOWED_ORIGIN = process.env.ALLOWED_ORIGIN || '';
 
 // Only these files/folders of the site are served; server code and data never are.
-const PUBLIC_FILES = new Set(['index.html', 'product.html', 'order-success.html', 'styles.css']);
+const PUBLIC_FILES = new Set(['index.html', 'product.html', 'order-success.html', 'styles.css', 'site.webmanifest', 'favicon.ico']);
 const PUBLIC_DIRS = ['js/', 'images/'];
 const MIME = {
   '.html': 'text/html; charset=utf-8', '.css': 'text/css; charset=utf-8', '.js': 'text/javascript; charset=utf-8',
-  '.png': 'image/png', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.webp': 'image/webp', '.svg': 'image/svg+xml', '.ico': 'image/x-icon',
+  '.webmanifest': 'application/manifest+json', '.png': 'image/png', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.webp': 'image/webp', '.svg': 'image/svg+xml', '.ico': 'image/x-icon',
 };
 const SECURITY_HEADERS = {
   'X-Content-Type-Options': 'nosniff',
