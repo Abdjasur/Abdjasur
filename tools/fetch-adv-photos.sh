@@ -14,6 +14,4 @@ while read -r name id; do
 done <<'EOF'
 drainage 620583f5-05e6-48a8-bebf-0e5565edada8
 insulation 0c5aae16-5863-4573-830a-b1d8909adb8b
-utilities 3119e472-d442-4eb6-b97b-a415ade157b5
-level a8504536-0636-4d93-a406-061e8831f2b5
 EOF

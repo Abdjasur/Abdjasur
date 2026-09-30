@@ -553,3 +553,10 @@ html.modal-open { overflow: hidden; }
 .footer__bottom { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px; margin-top: 44px; padding-top: 20px; padding-bottom: 24px; border-top: 1px solid rgba(255, 255, 255, .08); font-size: .82rem; }
 @media (max-width: 560px) { .footer__grid { grid-template-columns: 1fr 1fr; gap: 28px 20px; } .footer__brand, .footer__col:last-child { grid-column: 1 / -1; } }
 .footer__bottom a { color: #5fe3a1; text-decoration: none; }
+
+/* language switcher with flags */
+.lang { gap: 2px; }
+.lang button { display: inline-flex; align-items: center; gap: 6px; padding: 5px 10px 5px 6px; }
+.lang button svg { width: 22px; height: 15px; border-radius: 3px; box-shadow: 0 0 0 1px rgba(0, 0, 0, .12); flex: none; }
+.lang button.is-active svg { box-shadow: 0 0 0 1.5px #fff; }
+@media (max-width: 420px) { .lang button { padding: 5px 6px; gap: 0; } .lang button span { display: none; } .lang button svg { width: 24px; height: 16px; } }

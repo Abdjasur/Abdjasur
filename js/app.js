@@ -100,7 +100,7 @@
 
   function renderContacts() {
     const links = {
-      phone: CONTACTS.phone && `<a href="${telHref(CONTACTS.phone)}">${esc(CONTACTS.phone)}</a>`,
+      phone: [CONTACTS.phone, CONTACTS.phone2].filter(Boolean).map((n) => `<a href="${telHref(n)}">${esc(n)}</a>`).join('<br>'),
       telegram: CONTACTS.telegram && `<a href="${tgUrl()}" target="_blank" rel="noopener">@${esc(CONTACTS.telegram)}</a>`,
       instagram: CONTACTS.instagram && `<a href="https://instagram.com/${encodeURIComponent(CONTACTS.instagram)}" target="_blank" rel="noopener">@${esc(CONTACTS.instagram)}</a>`,
       telegramChannel: CONTACTS.telegramChannel && `<a href="https://t.me/${encodeURIComponent(CONTACTS.telegramChannel)}" target="_blank" rel="noopener">@${esc(CONTACTS.telegramChannel)}</a>`,
