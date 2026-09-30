@@ -560,3 +560,17 @@ html.modal-open { overflow: hidden; }
 .lang button svg { width: 22px; height: 15px; border-radius: 3px; box-shadow: 0 0 0 1px rgba(0, 0, 0, .12); flex: none; }
 .lang button.is-active svg { box-shadow: 0 0 0 1.5px #fff; }
 @media (max-width: 420px) { .lang button { padding: 5px 6px; gap: 0; } .lang button span { display: none; } .lang button svg { width: 24px; height: 16px; } }
+
+/* applications: photo cards */
+.uses--photo { display: grid; gap: 18px; grid-template-columns: repeat(3, 1fr); }
+@media (max-width: 900px) { .uses--photo { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 520px) { .uses--photo { grid-template-columns: 1fr; } }
+.uses--photo li { position: relative; display: block; padding: 0; overflow: hidden; border-radius: 18px; background: #0b1512; border: 1px solid rgba(95, 227, 161, .25); aspect-ratio: 4 / 3.3; }
+.uses--photo li img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform .5s; }
+.uses--photo li:hover img { transform: scale(1.05); }
+.uses--photo li::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(7, 18, 14, 0) 45%, rgba(7, 18, 14, .85) 72%, #07120e 100%); pointer-events: none; }
+.uses__label { position: absolute; left: 0; right: 0; bottom: 0; z-index: 1; display: flex; align-items: center; gap: 16px; padding: 18px 22px 22px; }
+.uses__icon { flex: none; display: grid; place-items: center; padding-right: 16px; border-right: 1px solid rgba(255, 255, 255, .25); }
+.uses--photo .uses__icon svg { width: 42px; height: 42px; fill: none; stroke: #3ddc84; stroke-width: 2.4; }
+.uses__label span { position: relative; color: #fff; font-weight: 700; font-size: 1.08rem; line-height: 1.3; padding-bottom: 10px; }
+.uses__label span::after { content: ""; position: absolute; left: 0; bottom: 0; width: 34px; height: 3px; border-radius: 2px; background: #3ddc84; }
