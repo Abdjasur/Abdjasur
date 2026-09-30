@@ -49,13 +49,13 @@ window.PRODUCTS = [
     height: '70–120 mm', load: '600–1100 kg',
     specs: [['s.height', '70–120 mm'], ['s.size', '150 × 195 × (70–120) mm'], ...ADJ_COMMON('070–120')] },
   { slug: 'pa-a-04', code: 'PA-A-04', category: 'adjustable', image: 'images/pa-a-04.webp', gallery: [],
-    height: '145–170 mm', load: '600–1100 kg', details: false,
+    height: '145–170 mm', load: '600–1100 kg',
     specs: [['s.height', '145–170 mm'], ['s.size', '150 × 195 × (145–170) mm'], ['s.load', '600–1100 kg'], ['s.material', PP], ['s.top', { t: ['v.topTile', 'v.topDeck'] }]] },
   { slug: 'pa-a-05', code: 'PA-A-05', category: 'adjustable', image: 'images/pa-a-05.webp', gallery: [],
-    height: '170–220 mm', load: '600–1100 kg', details: false,
+    height: '170–220 mm', load: '600–1100 kg',
     specs: [['s.height', '170–220 mm'], ['s.size', '150 × 195 × (170–220) mm'], ['s.load', '600–1100 kg'], ['s.material', PP], ['s.top', { t: ['v.topTile', 'v.topDeck'] }]] },
   { slug: 'pa-a-06', code: 'PA-A-06', category: 'adjustable', image: 'images/pa-a-06.webp', gallery: [],
-    height: '270–320 mm', load: '600–1100 kg', details: false,
+    height: '270–320 mm', load: '600–1100 kg',
     specs: [['s.height', '270–320 mm'], ['s.size', '150 × 195 × (270–320) mm'], ['s.load', '600–1100 kg'], ['s.material', PP], ['s.top', { t: ['v.topTile', 'v.topDeck'] }]] },
   { slug: 'pa-01', code: 'PA-01', category: 'fixed', image: 'images/pa-01.webp', gallery: ['images/pa-01-drawing.webp'],
     height: '20 mm', load: '1000–1800 kg',
@@ -80,3 +80,11 @@ window.PRODUCTS = [
 // If the site is hosted separately (e.g. GitHub Pages), put the backend URL here,
 // e.g. 'https://api.axpedestal.uz/api/orders', and set ALLOWED_ORIGIN on the server.
 window.ORDER_API_URL = '/api/orders';
+
+// Visitor statistics. Paste the counter/measurement ID to switch a service on; empty = off.
+//   yandexMetrika: counter number from metrika.yandex.ru, e.g. '98765432'
+//   googleAnalytics: GA4 measurement ID from analytics.google.com, e.g. 'G-XXXXXXXXXX'
+window.ANALYTICS = {
+  yandexMetrika: '',
+  googleAnalytics: '',
+};

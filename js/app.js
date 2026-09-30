@@ -91,6 +91,8 @@
     if (page === 'product') renderProduct();
     if (page === 'success') renderSuccess();
     if (modal) renderModalOptions();
+    $('meta[name="description"]')?.setAttribute('content', page === 'product' && currentProduct
+      ? `${productName(currentProduct)} — ${t('meta.product')}` : t('meta.desc'));
     document.title = page === 'product' && currentProduct ? `${productName(currentProduct)} — AX Pedestal`
       : page === 'success' ? `${t('s.title')} — AX Pedestal` : t('title');
   }
@@ -117,6 +119,7 @@
       email: CONTACTS.email && `<a href="mailto:${encodeURIComponent(CONTACTS.email).replace('%40', '@')}">${esc(CONTACTS.email)}</a>`,
     };
     $$('[data-call]').forEach((a) => {
+      if (!a.dataset.tracked) { a.dataset.tracked = '1'; a.addEventListener('click', () => track('call_click')); }
       if (!CONTACTS.phone) { a.hidden = true; return; }
       a.href = telHref(CONTACTS.phone);
       $('[data-call-number]', a).textContent = CONTACTS.phone;
@@ -313,6 +316,36 @@
     input.addEventListener('blur', () => { input.value = clampQty(input.value); onChange(Number(input.value)); input.dispatchEvent(new Event('input', { bubbles: true })); });
   }
 
+  // ---------------- analytics ----------------
+  // Loaded only when an ID is set in window.ANALYTICS (js/data.js). No inline scripts, so the CSP stays strict.
+  const ANALYTICS = window.ANALYTICS || {};
+  function loadScript(src) { const s = document.createElement('script'); s.async = true; s.src = src; document.head.appendChild(s); }
+  function initAnalytics() {
+    const ym = String(ANALYTICS.yandexMetrika || '').trim();
+    if (/^\d+$/.test(ym)) {
+      window.ym = window.ym || function (...a) { (window.ym.a = window.ym.a || []).push(a); };
+      window.ym.l = Date.now();
+      loadScript('https://mc.yandex.ru/metrika/tag.js');
+      window.ym(Number(ym), 'init', { clickmap: true, trackLinks: true, accurateTrackBounce: true });
+    }
+    const ga = String(ANALYTICS.googleAnalytics || '').trim();
+    if (/^G-[A-Z0-9]+$/.test(ga)) {
+      window.dataLayer = window.dataLayer || [];
+      window.gtag = function () { window.dataLayer.push(arguments); }; // gtag.js expects the arguments object
+      window.gtag('js', new Date());
+      window.gtag('config', ga);
+      loadScript(`https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(ga)}`);
+    }
+  }
+  // Goal/event in every configured service; a no-op when analytics is off.
+  function track(name, params = {}) {
+    try {
+      const ym = Number(ANALYTICS.yandexMetrika);
+      if (ym && window.ym) window.ym(ym, 'reachGoal', name, params);
+      if (window.gtag) window.gtag('event', name, params);
+    } catch { /* analytics must never break the site */ }
+  }
+
   // ---------------- cart ----------------
   // [{ slug, qty }] in localStorage: survives reloads and page changes until the order is sent.
   const CART_ICON = '<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 4h2l2.4 11.2a2 2 0 0 0 2 1.6h7.7a2 2 0 0 0 2-1.5L21 8H6.2"/><circle cx="10" cy="20.5" r="1.3"/><circle cx="17" cy="20.5" r="1.3"/></svg>';
@@ -320,6 +353,7 @@
   const cartUnits = () => cartItems().reduce((n, it) => n + it.qty, 0);
   function saveCart(items) { store.set('localStorage', CART_KEY, items); renderCart(); }
   function addToCart(slug, qty) {
+    track('add_to_cart', { product: slug, quantity: qty });
     const items = cartItems();
     const hit = items.find((it) => it.slug === slug);
     if (hit) hit.qty = clampQty(hit.qty + qty); else items.push({ slug, qty: clampQty(qty) });
@@ -645,6 +679,7 @@
       const body = await res.json().catch(() => ({}));
       if (res.ok && body.ok) {
         store.set('sessionStorage', LAST_ORDER_KEY, { id: body.id, ...data });
+        track('order_sent', { items: data.items ? data.items.length : 1, quantity: data.quantity });
         store.remove('localStorage', DRAFT_KEY);
         if (data.items) store.remove('localStorage', CART_KEY);
         if (STANDALONE) { closeOrder(); location.hash = `success=${encodeURIComponent(body.id)}`; } else location.href = `order-success.html?id=${encodeURIComponent(body.id)}`;
@@ -776,6 +811,7 @@
     renderCatalog();
   });
   initHeader();
+  initAnalytics();
   if (STANDALONE || page !== 'success') initModal();
   buildCart();
   if (STANDALONE) {

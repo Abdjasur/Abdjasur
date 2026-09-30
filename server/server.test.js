@@ -115,6 +115,15 @@ test('when Telegram is down the order is still accepted and delivered on retry',
   assert.deepEqual(JSON.parse(await fs.readFile(path.join(dataDir, 'unsent.json'), 'utf8')), []);
 });
 
+test('robots.txt, sitemap.xml and the web manifest are served with the right types', async () => {
+  for (const [file, type] of [['robots.txt', 'text/plain'], ['sitemap.xml', 'application/xml'], ['site.webmanifest', 'application/manifest+json']]) {
+    const res = await fetch(`${base}/${file}`);
+    assert.equal(res.status, 200, file);
+    assert.ok(res.headers.get('content-type').startsWith(type), file);
+  }
+  assert.match(await (await fetch(`${base}/robots.txt`)).text(), /Sitemap: https:\/\/axpedestal\.com\/sitemap\.xml/);
+});
+
 test('bot token and server files are never served', async () => {
   for (const p of ['/server/server.js', '/server/data/orders.jsonl', '/package.json', '/.env', '/js/../server/server.js', '/%2e%2e/etc/passwd']) {
     const res = await fetch(base + p);

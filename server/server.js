@@ -27,17 +27,27 @@ const RETRY_INTERVAL_MS = Number(process.env.RETRY_INTERVAL_MS) || 60_000;
 const ALLOWED_ORIGIN = process.env.ALLOWED_ORIGIN || '';
 
 // Only these files/folders of the site are served; server code and data never are.
-const PUBLIC_FILES = new Set(['index.html', 'product.html', 'order-success.html', 'styles.css', 'site.webmanifest', 'favicon.ico']);
+const PUBLIC_FILES = new Set(['index.html', 'product.html', 'order-success.html', 'styles.css', 'site.webmanifest', 'favicon.ico', 'robots.txt', 'sitemap.xml']);
 const PUBLIC_DIRS = ['js/', 'images/'];
 const MIME = {
   '.html': 'text/html; charset=utf-8', '.css': 'text/css; charset=utf-8', '.js': 'text/javascript; charset=utf-8',
-  '.webmanifest': 'application/manifest+json', '.png': 'image/png', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.webp': 'image/webp', '.svg': 'image/svg+xml', '.ico': 'image/x-icon',
+  '.webmanifest': 'application/manifest+json', '.txt': 'text/plain; charset=utf-8', '.xml': 'application/xml; charset=utf-8', '.png': 'image/png', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.webp': 'image/webp', '.svg': 'image/svg+xml', '.ico': 'image/x-icon',
 };
 const SECURITY_HEADERS = {
   'X-Content-Type-Options': 'nosniff',
   'Referrer-Policy': 'strict-origin-when-cross-origin',
   'X-Frame-Options': 'DENY',
-  'Content-Security-Policy': "default-src 'self'; img-src 'self' data:; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'",
+  // Analytics hosts (Yandex Metrika, Google Analytics) are allowed; their scripts only load when an ID is set in js/data.js.
+  'Content-Security-Policy': [
+    "default-src 'self'",
+    "script-src 'self' https://mc.yandex.ru https://yastatic.net https://www.googletagmanager.com",
+    "img-src 'self' data: https://mc.yandex.ru https://*.google-analytics.com https://*.googletagmanager.com",
+    "style-src 'self' https://fonts.googleapis.com",
+    "font-src https://fonts.gstatic.com",
+    "connect-src 'self' https://mc.yandex.ru https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com",
+    "frame-src https://mc.yandex.ru",
+    "frame-ancestors 'none'", "base-uri 'self'", "form-action 'self'",
+  ].join('; '),
 };
 
 // ---------- validation ----------
