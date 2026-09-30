@@ -175,6 +175,14 @@ a { color: inherit; }
 .product__body h3 a:hover { color: var(--green); }
 .product__actions { margin-top: auto; display: grid; grid-template-columns: 1fr auto; gap: 8px; }
 .product .btn { margin-top: 0; }
+/* quantity stepper on catalogue cards */
+.product .qty--card { display: grid; grid-template-columns: 44px 1fr 44px; align-items: center; gap: 6px; height: auto; margin-top: auto; padding: 5px; border-radius: 14px; background: var(--bg-soft); border: 1px solid var(--line); }
+.product .qty--card button { width: auto; height: 40px; border: 0; border-radius: 10px; background: var(--surface); color: var(--text); font: 600 1.3rem Manrope, sans-serif; cursor: pointer; box-shadow: 0 1px 2px rgba(0, 0, 0, .08); transition: background .15s, color .15s; }
+.product .qty--card button:hover { background: var(--green); color: #fff; }
+.product .qty--card input { width: 100%; min-width: 0; height: 40px; text-align: center; font: 700 1.1rem Manrope, sans-serif; }
+.product .qty--card input:focus { outline: 2px solid var(--green); outline-offset: 2px; border-radius: 6px; }
+.product .qty--card:focus-within { border-color: var(--green); }
+.product .qty--card + .product__actions { margin-top: 0; }
 
 /* contact CTA card */
 .cta-card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 32px; display: grid; gap: 14px; }

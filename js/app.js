@@ -152,6 +152,7 @@
 
   // ---------------- home ----------------
   let filter = 'all';
+  const cardQty = {}; // quantity chosen on each catalogue card, kept across re-renders
   function renderCatalog() {
     const box = $('#products');
     if (!box) return;
@@ -167,12 +168,18 @@
           <h3><a href="${productUrl(p)}">${esc(p.code)}</a></h3>
           ${cardDesc(p)}
           ${specsHtml(cardSpecs(p))}
+          <div class="qty qty--card" role="group" aria-label="${t('pp.qty')} ${esc(p.code)}">
+            <button type="button" data-step="-1" aria-label="${t('m.decrease')}">−</button>
+            <input type="number" inputmode="numeric" min="1" max="100000" value="${cardQty[p.slug] || 1}" aria-label="${t('pp.qty')} ${esc(p.code)}" data-card-qty="${esc(p.slug)}">
+            <button type="button" data-step="1" aria-label="${t('m.increase')}">+</button>
+          </div>
           <div class="product__actions">
-            <button type="button" class="btn btn--primary btn--sm" data-order="${esc(p.slug)}">${t('order')}</button>
+            <button type="button" class="btn btn--primary btn--sm" data-order="${esc(p.slug)}" data-order-card>${t('order')}</button>
             <a class="btn btn--ghost btn--sm" href="${productUrl(p)}">${t('details')}</a>
           </div>
         </div>
       </article>`).join('');
+    $$('.qty--card', box).forEach((el) => bindStepper(el, (v) => { cardQty[$('input', el).dataset.cardQty] = v; }));
   }
 
   // Footer product links: every pedestal plus the accessories filter.
@@ -572,7 +579,9 @@
       const btn = e.target.closest('[data-order]');
       if (!btn) return;
       e.preventDefault();
-      openOrder(btn.dataset.order || undefined, btn.hasAttribute('data-order-qty') ? qty : undefined);
+      const cardInput = btn.hasAttribute('data-order-card') && $('[data-card-qty]', btn.closest('.product'));
+      const quantity = btn.hasAttribute('data-order-qty') ? qty : cardInput ? clampQty(cardInput.value) : undefined;
+      openOrder(btn.dataset.order || undefined, quantity);
     });
   }
 
