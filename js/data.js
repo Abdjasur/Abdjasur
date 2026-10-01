@@ -11,7 +11,7 @@ window.CONTACTS = {
   telegram: 'mr_jasurme',          // manager's Telegram username without @, e.g. 'axpedestal'
   telegramChannel: 'axpedestal',   // public Telegram channel username without @
   instagram: 'axpedestal_com',     // Instagram username without @
-  email: 'axpedestal@gmail.com',
+  email: 'info@axpedestal.com',
   youtube: 'https://www.youtube.com/@AxPedestal',
   facebook: 'https://www.facebook.com/Axpedestal', // full Facebook page URL; empty = icon hidden
 };
