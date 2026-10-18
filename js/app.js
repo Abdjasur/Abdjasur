@@ -20,7 +20,7 @@
   const routeId = () => (STANDALONE ? hashParam(page) : new URLSearchParams(location.search).get('id'));
   const homeUrl = (anchor = '') => (STANDALONE ? `#${anchor || 'top'}` : `index.html${anchor ? `#${anchor}` : ''}`);
 
-  let lang = 'en';
+  let lang = 'uz';
   const t = (key) => I18N[lang][key] ?? I18N.uz[key] ?? key;
   const $ = (sel, root = document) => root.querySelector(sel);
   const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];
@@ -829,7 +829,7 @@
     });
   }
   // Every new visit opens in English; a switched language holds across pages until the tab closes.
-  applyLang(store.get('sessionStorage', 'lang') || 'en');
+  applyLang(store.get('sessionStorage', 'lang') || 'uz');
 
   // reveal on scroll (home)
   if ('IntersectionObserver' in window) {
